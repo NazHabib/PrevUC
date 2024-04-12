@@ -1,0 +1,13 @@
+<!-- In main/results.html -->
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Prediction Results</h2>
+    <p>Math Score: {{ prediction_result.math_score }}</p>
+    <p>Reading Score: {{ prediction_result.reading_score }}</p>
+    <p>Writing Score: {{ prediction_result.writing_score }}</p>
+
+    <a href="{% url 'guest_prevision' %}">Make another prediction</a>
+</div>
+{% endblock %}
