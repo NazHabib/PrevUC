@@ -2,24 +2,43 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
+from .models import Profile
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
     perfil = forms.CharField(required=True)
+
     class Meta:
-        model=User
-        fields = ["username", "email", "perfil", "password1", "password2"]
+        model = User
+        fields = ["username", "email", "password1", "password2"]
+
+    def save(self, commit=True):
+        user = super(RegisterForm, self).save(commit=False)
+        if commit:
+            user.save()
+            profile = Profile(user=user, perfil=self.cleaned_data['perfil'])
+            profile.save()
+        return user
+
 
 class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['perfil']
+
+
+# For editing User model fields
+class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["username", "email"]
 
-class UserForm(UserChangeForm):
-    password = None  # Prevents the password fields from being displayed
+# For editing Profile model fields
+class ProfileForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['username', 'email']
+        model = Profile
+        fields = ['perfil']
+
 
 class PrevisionForm(forms.Form):
     GENDER_CHOICES = [

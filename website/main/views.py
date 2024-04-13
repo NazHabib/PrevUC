@@ -7,6 +7,35 @@ from django.shortcuts import redirect, render
 from .forms import PrevisionForm
 from .forms import RegisterForm
 from .predictor import predict_scores
+from .forms import UserForm, ProfileForm
+from django.contrib.auth.models import User
+from .models import Profile  #
+
+
+@login_required
+def edit_account(request):
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        profile = Profile(user=request.user)
+        profile.save()
+
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            # Replace 'some_view' with the name of the view you want to redirect to after saving
+            return redirect('profile')
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=profile)
+
+    return render(request, 'main/edit_account.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
 
 
 def base(request):
@@ -112,4 +141,5 @@ def guest_prevision(request):
 def prediction_results(request):
     prediction_result = request.session.get('prediction_result', {})
     return render(request, 'main/results.html', {'prediction_result': prediction_result})
+
 

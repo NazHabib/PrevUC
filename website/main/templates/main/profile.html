@@ -12,17 +12,12 @@
         <p><strong>Perfil:</strong> {{ user.profile.perfil }}</p>
     </div>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ user_form.as_p }}
-        {{ profile_form.as_p }}
-        <button type="submit">Save changes</button>
-    </form>
-    
+    <a href="{% url 'edit_account' %}">Edit Account Information</a>
     <!-- Add account deletion form -->
     <form method="post" action="{% url 'account_delete' %}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Delete Account</button>
+
     </form>
 </div>
 {% endblock %}

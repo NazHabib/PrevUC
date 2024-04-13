@@ -14,5 +14,5 @@ urlpatterns = [
     path('guest-main/', views.guest_prevision, name='guest_prevision'),
     path('results/', views.prediction_results, name='prediction_results'),
     path('submit-prevision-form/', views.guest_prevision, name='guest_prevision'),
-
+    path('edit_account/', views.edit_account, name='edit_account'),
 ]

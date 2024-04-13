@@ -5,20 +5,25 @@
 {% block content %}
 <div class="container">
     <h2>Your Saved Previsions</h2>
-    <!-- 
-    {% if previsions %}
-        {% for prevision in previsions %}
-        <div class="card mt-4">
-            <div class="card-body">
-                <h5 class="card-title">{{ prevision.title }}</h5>
-                <p class="card-text">{{ prevision.content }}</p>
-                <p class="text-muted">Saved on: {{ prevision.created_at|date:"Y-m-d H:i" }}</p>
+    {% if user.is_authenticated %}
+        {% if previsions %}
+            {% for prevision in previsions %}
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ prevision.title }}</h5>
+                    <p class="card-text">{{ prevision.content }}</p>
+                    <p class="text-muted">Saved on: {{ prevision.created_at|date:"Y-m-d H:i" }}</p>
+                </div>
             </div>
-        </div>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            <p>You have no saved previsions.</p>
+        {% endif %}
     {% else %}
-        <p>You have no saved previsions.</p>
+        <p>You need to log in to view or save previsions.</p>
+        <div class="mt-4">
+            <a href="{% url 'login' %}" class="btn btn-primary">Login to Save Previsions</a>
+        </div>
     {% endif %}
-    -->
 </div>
 {% endblock %}
