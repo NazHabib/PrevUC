@@ -10,4 +10,13 @@
 
     <a href="{% url 'guest_prevision' %}">Make another prediction</a>
 </div>
+    {% if user.is_authenticated %}
+        <form action="{% url 'saved_previsions' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Save Prevision</button>
+        </form>
+    {% else %}
+        <p>You must be logged in to save previsions.</p>
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+    {% endif %}
 {% endblock %}

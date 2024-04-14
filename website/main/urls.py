@@ -15,4 +15,6 @@ urlpatterns = [
     path('results/', views.prediction_results, name='prediction_results'),
     path('submit-prevision-form/', views.guest_prevision, name='guest_prevision'),
     path('edit_account/', views.edit_account, name='edit_account'),
+    path('main-prevision/', views.main_prevision, name='main_prevision'),
+    path('saved-previsions/', views.saved_previsions, name='saved_previsions'),
 ]

@@ -9,7 +9,7 @@ from .forms import RegisterForm
 from .predictor import predict_scores
 from .forms import UserForm, ProfileForm
 from django.contrib.auth.models import User
-from .models import Profile  #
+from .models import Profile, Prevision
 
 
 @login_required
@@ -143,3 +143,58 @@ def prediction_results(request):
     return render(request, 'main/results.html', {'prediction_result': prediction_result})
 
 
+@login_required  # Ensures only authenticated users can access this view
+def main_prevision(request):
+    if request.method == 'POST':
+        form = PrevisionForm(request.POST)
+        if form.is_valid():
+            input_data = form.cleaned_data
+            df_input = pd.DataFrame([input_data])
+
+            # Adjust columns to the expected format, similar to guest_prevision
+            df_input.rename(columns={
+                'race_ethnicity': 'race/ethnicity',
+                'parental_level_of_education': 'parental level of education'
+            }, inplace=True)
+
+            # Convert boolean fields and one-hot encode as before
+            df_input = convert_bool_string_to_numeric(df_input, ['gender', 'lunch', 'test_preparation_course'])
+            df_input_encoded = pd.get_dummies(df_input, columns=['race/ethnicity', 'parental level of education'])
+
+            # Ensure DataFrame matches expected structure
+            expected_columns = [
+                # Add or remove columns based on model requirements
+                'gender', 'lunch', 'test preparation course', 'race/ethnicity_group A',
+                'race/ethnicity_group B', 'race/ethnicity_group C', 'race/ethnicity_group D',
+                'race/ethnicity_group E', "parental level of education_associate's degree",
+                "parental level of education_bachelor's degree", 'parental level of education_high school',
+                "parental level of education_master's degree", 'parental level of education_some college',
+                'parental level of education_some high school'
+            ]
+            df_input_encoded = df_input_encoded.reindex(columns=expected_columns, fill_value=0).astype('float32')
+
+            # Predict and store results in the session
+            prediction_result = predict_scores(df_input_encoded)
+            request.session['prediction_result'] = {k: float(v) for k, v in prediction_result.items()}
+
+            return redirect('prediction_results')
+    else:
+        form = PrevisionForm()
+    return render(request, 'main/main_prevision.html', {'form': form})
+@login_required
+def saved_previsions(request):
+    if request.method == 'POST':
+        # Save a new prevision
+        prediction_result = request.session.get('prediction_result', {})
+        new_prevision = Prevision(
+            user=request.user,
+            math_score=prediction_result.get('math_score'),
+            reading_score=prediction_result.get('reading_score'),
+            writing_score=prediction_result.get('writing_score')
+        )
+        new_prevision.save()
+        return redirect('saved_previsions')
+
+    # Fetch all previsions for the current user to display
+    previsions = Prevision.objects.filter(user=request.user)
+    return render(request, 'main/saved_previsions.html', {'previsions': previsions})

@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Main Prevision Page - PrevUC{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Prevision Form for Registered Users</h2>
+    <form action="{% url 'main_prevision' %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}
+
