@@ -67,7 +67,12 @@ def profile(request):
 
 @login_required
 def saved_previsions(request):
-    return redirect('main/saved_previsions.html')
+    if request.user.is_authenticated:
+        previsions = Prevision.objects.filter(user=request.user).order_by('-created_at')
+        return render(request, 'main/saved_previsions.html', {'previsions': previsions})
+    else:
+        # Redirect or handle non-authenticated users
+        return redirect('login')
 
 @login_required
 def account_delete(request):

@@ -6,19 +6,20 @@
 <div class="container">
     <h2>Your Saved Previsions</h2>
     {% if user.is_authenticated %}
-        {% if previsions %}
-            {% for prevision in previsions %}
+        {% for prevision in previsions %}
             <div class="card mt-4">
                 <div class="card-body">
                     <h5 class="card-title">{{ prevision.title }}</h5>
                     <p class="card-text">{{ prevision.content }}</p>
+                    <p>Math Score: {{ prevision.math_score }}</p>
+                    <p>Reading Score: {{ prevision.reading_score }}</p>
+                    <p>Writing Score: {{ prevision.writing_score }}</p>
                     <p class="text-muted">Saved on: {{ prevision.created_at|date:"Y-m-d H:i" }}</p>
                 </div>
             </div>
-            {% endfor %}
-        {% else %}
+        {% empty %}
             <p>You have no saved previsions.</p>
-        {% endif %}
+        {% endfor %}
     {% else %}
         <p>You need to log in to view or save previsions.</p>
         <div class="mt-4">
