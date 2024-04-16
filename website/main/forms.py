@@ -1,12 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserChangeForm
-from .models import Profile
+from .models import Profile, PredictionDataForm
+
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    perfil = forms.CharField(required=True)
+    perfil = forms.ChoiceField(choices=Profile.PERFIL_CHOICES, required=True)
 
     class Meta:
         model = User
@@ -14,11 +14,19 @@ class RegisterForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super(RegisterForm, self).save(commit=False)
+        user.email = self.cleaned_data['email']
         if commit:
             user.save()
             profile = Profile(user=user, perfil=self.cleaned_data['perfil'])
             profile.save()
         return user
+
+class ProfileForm(forms.ModelForm):
+    perfil = forms.ChoiceField(choices=Profile.PERFIL_CHOICES)
+
+    class Meta:
+        model = Profile
+        fields = ['perfil']
 
 
 class UserProfileForm(forms.ModelForm):
@@ -32,12 +40,6 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["username", "email"]
-
-# For editing Profile model fields
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['perfil']
 
 
 class PrevisionForm(forms.Form):
@@ -78,3 +80,8 @@ class PrevisionForm(forms.Form):
     test_preparation_course = forms.ChoiceField(choices=TEST_PREPARATION_CHOICES)
     race_ethnicity = forms.ChoiceField(choices=RACE_ETHNICITY_CHOICES)
     parental_level_of_education = forms.ChoiceField(choices=PARENTAL_LEVEL_OF_EDUCATION_CHOICES)
+
+class PrevisionInputForm(forms.ModelForm):
+    class Meta:
+        model = PredictionDataForm
+        fields = ['gender', 'lunch', 'test_preparation_course', 'race_ethnicity', 'parental_level_of_education', 'math_score', 'reading_score', 'writing_score']

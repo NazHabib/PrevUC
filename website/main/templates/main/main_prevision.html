@@ -4,11 +4,11 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Prevision Form for Registered Users</h2>
+    <h2>Prevision Form</h2>
     <form action="{% url 'main_prevision' %}" method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary"Get Prediction</button>
     </form>
 </div>
 {% endblock %}

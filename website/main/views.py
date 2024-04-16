@@ -1,16 +1,38 @@
 import pandas as pd
 from django.contrib import messages
 from django.contrib.auth import login
-# from .models import SavedPrevision
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from .forms import PrevisionForm
+from .forms import PrevisionForm, PrevisionInputForm
 from .forms import RegisterForm
 from .predictor import predict_scores
 from .forms import UserForm, ProfileForm
-from django.contrib.auth.models import User
 from .models import Profile, Prevision
+from .models import PredictionDataForm
+from .decorators import role_required
 
+
+@role_required('professor')
+def data_input(request):
+    if request.method == 'POST':
+        form = PrevisionInputForm(request.POST)
+        if form.is_valid():
+            new_data = PredictionDataForm(
+                gender=form.cleaned_data['gender'],
+                lunch=form.cleaned_data['lunch'],
+                test_preparation_course=form.cleaned_data['test_preparation_course'],
+                race_ethnicity=form.cleaned_data['race_ethnicity'],
+                parental_level_of_education=form.cleaned_data['parental_level_of_education'],
+                math_score=form.cleaned_data['math_score'],
+                reading_score=form.cleaned_data['reading_score'],
+                writing_score=form.cleaned_data['writing_score']
+            )
+            new_data.save()
+            return redirect('home')
+    else:
+        form = PrevisionInputForm()
+
+    return render(request, 'main/data_input.html', {'form': form})
 
 @login_required
 def edit_account(request):
@@ -80,7 +102,7 @@ def account_delete(request):
         user = request.user
         user.delete()
         messages.success(request, 'Your account has been deleted.')
-        return redirect(' ')  
+        return redirect('login')
 
     return redirect('main/profile.html')
 

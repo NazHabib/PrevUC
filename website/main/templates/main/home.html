@@ -27,17 +27,21 @@
     <div class="container mt-3">
   <div class="row">
     <div class="col text-center">
-      <a href="{% url 'main_prevision' %}" class="btn btn-primary">Get Predictions</a>
+      <a href="{% url 'main_prevision' %}" class="btn btn-primary">Get Prediction</a>
     </div>
   </div>
 </div>
-
+<div class="container">
+    <p>Esta parte é só de acesso para os professores.</p>
+    <!-- Button that links to the data_input view -->
+    <a href="{% url 'data_input' %}" class="btn btn-primary">Input Prediction Data</a>
+</div>
 <!-- Body content with buttons -->
 <div class="container mt-3">
   <div class="row">
     <div class="col text-center">
       <button onclick="history.back()" class="btn btn-secondary">Go to Previous Page</button>
-      <a href="{% url 'saved_previsions' %}" class="btn btn-primary">Go to Saved Previsions</a>
+      <a href="{% url 'saved_previsions' %}" class="btn btn-primary">Go to Saved Predictions</a>
     </div>
   </div>
 </div>
