@@ -19,7 +19,9 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'profile' %}">Profile</a>
         </li>
-        <!-- Add more nav items here if needed -->
+        <li class="nav-item">
+          <a href="{% url 'view_notifications' %}" class="btn btn-secondary">View Notifications</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -32,11 +34,20 @@
   </div>
 </div>
 <div class="container">
-    <p>Esta parte é só de acesso para os professores.</p>
-    <!-- Button that links to the data_input view -->
-    <a href="{% url 'data_input' %}" class="btn btn-primary">Input Prediction Data</a>
+    {% if request.user.is_authenticated %}
+        {% if request.user.profile.perfil == 'data scientist' %}
+            <h3>For Data Scientists:</h3>
+            <a href="{% url 'change_documentation' %}" class="btn btn-primary">Document Model Changes</a>
+            <a href="{% url 'create_notification' %}" class="btn btn-primary">Create Notification</a>
+        {% endif %}
+
+        {% if request.user.profile.perfil == 'professor' %}
+            <h3>For Professor:</h3>
+            <a href="{% url 'data_input' %}" class="btn btn-primary">Input Prediction Data</a>
+        {% endif %}
+    {% endif %}
 </div>
-<!-- Body content with buttons -->
+
 <div class="container mt-3">
   <div class="row">
     <div class="col text-center">

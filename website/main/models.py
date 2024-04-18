@@ -67,3 +67,17 @@ class Prevision(models.Model):
     writing_score = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class ChangeLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Notification(models.Model):
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    users_notified = models.ManyToManyField(User, related_name='notifications')
+
+    def __str__(self):
+        return self.message
+

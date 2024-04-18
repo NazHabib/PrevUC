@@ -2,7 +2,17 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile, PredictionDataForm
+from .models import ChangeLog
+from .models import Notification
 
+class NotificationForm(forms.ModelForm):
+    class Meta:
+        model = Notification
+        fields = ['message']
+class ChangeForm(forms.ModelForm):
+    class Meta:
+        model = ChangeLog
+        fields = ['name', 'description']
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)

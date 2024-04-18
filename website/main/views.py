@@ -2,14 +2,60 @@ import pandas as pd
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
-from .forms import PrevisionForm, PrevisionInputForm
+from .forms import PrevisionForm, PrevisionInputForm, ChangeForm, NotificationForm
 from .forms import RegisterForm
 from .predictor import predict_scores
 from .forms import UserForm, ProfileForm
 from .models import Profile, Prevision
 from .models import PredictionDataForm
 from .decorators import role_required
+from .models import Notification
+
+@login_required
+def create_notification(request):
+    if request.method == 'POST':
+        form = NotificationForm(request.POST)
+        if form.is_valid():
+            notification = form.save(commit=False)
+            notification.save()
+            return redirect('home')
+    else:
+        form = NotificationForm()
+    return render(request, 'main/create_notification.html', {'form': form})
+
+def notify_users(change):
+    message = f"{change.user.username} updated the model '{change.name}' at {change.created_at.strftime('%Y-%m-%d %H:%M:%S')}: {change.description}"
+    notification = Notification.objects.create(message=message)
+    for user in User.objects.exclude(id=change.user.id):
+        notification.users_notified.add(user)
+    notification.save()
+
+@login_required
+def view_notifications(request):
+    notifications = request.user.notifications.all()
+    return render(request, 'main/notifications.html', {'notifications': notifications})
+
+@login_required
+def change_documentation(request):
+    if request.method == 'POST':
+        form = ChangeForm(request.POST)
+        if form.is_valid():
+            change = form.save(commit=False)
+            change.user = request.user
+            change.save()
+            # Notify other users
+            notify_users(change)
+            return redirect('home')  # Redirect to an appropriate page
+    else:
+        form = ChangeForm()
+    return render(request, 'main/change_documentation.html', {'form': form})
+
+@login_required
+def view_notifications(request):
+    notifications = request.user.notifications.all()
+    return render(request, 'main/notifications.html', {'notifications': notifications})
 
 
 @role_required('professor')

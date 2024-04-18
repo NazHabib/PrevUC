@@ -18,4 +18,7 @@ urlpatterns = [
     path('main-prevision/', views.main_prevision, name='main_prevision'),
     path('saved-previsions/', views.saved_previsions, name='saved_previsions'),
     path('data-input/', views.data_input, name='data_input'),
+    path('change-documentation/', views.change_documentation, name='change_documentation'),
+    path('notifications/', views.view_notifications, name='view_notifications'),
+    path('create-notification/', views.create_notification, name='create_notification'),
 ]
