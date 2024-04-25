@@ -21,4 +21,5 @@ urlpatterns = [
     path('change-documentation/', views.change_documentation, name='change_documentation'),
     path('notifications/', views.view_notifications, name='view_notifications'),
     path('create-notification/', views.create_notification, name='create_notification'),
+    path('validate-data/', views.validate_data, name='validate_data'),
 ]

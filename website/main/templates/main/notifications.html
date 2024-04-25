@@ -1,9 +1,14 @@
 {% extends 'main/base.html' %}
+
 {% block content %}
-  <h2>Notifications</h2>
-  <ul>
-    {% for notification in notifications %}
-      <li>{{ notification.message }} - {{ notification.created_at }}</li>
-    {% endfor %}
-  </ul>
+<h2>Notifications</h2>
+{% if notifications %}
+    <ul>
+        {% for notification in notifications %}
+            <li>{{ notification.message }} ({{ notification.created_at }})</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No notifications found.</p>
+{% endif %}
 {% endblock %}

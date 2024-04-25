@@ -9,11 +9,14 @@
         {% for prevision in previsions %}
             <div class="card mt-4">
                 <div class="card-body">
-                    <h5 class="card-title">{{ prevision.title }}</h5>
-                    <p class="card-text">{{ prevision.content }}</p>
-                    <p>Math Score: {{ prevision.math_score }}</p>
-                    <p>Reading Score: {{ prevision.reading_score }}</p>
-                    <p>Writing Score: {{ prevision.writing_score }}</p>
+                    <p><strong>Gender:</strong> {{ prevision.gender }}</p>
+                    <p><strong>Lunch:</strong> {{ prevision.lunch }}</p>
+                    <p><strong>Test Preparation Course:</strong> {{ prevision.test_preparation_course }}</p>
+                    <p><strong>Race/Ethnicity:</strong> {{ prevision.race_ethnicity }}</p>
+                    <p><strong>Parental Level of Education:</strong> {{ prevision.parental_level_of_education }}</p>
+                    <p><strong>Math Score:</strong> {{ prevision.math_score }}</p>
+                    <p><strong>Reading Score:</strong> {{ prevision.reading_score }}</p>
+                    <p><strong>Writing Score:</strong> {{ prevision.writing_score }}</p>
                     <p class="text-muted">Saved on: {{ prevision.created_at|date:"Y-m-d H:i" }}</p>
                 </div>
             </div>

@@ -4,12 +4,61 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Prevision Form</h2>
-    <form action="{% url 'main_prevision' %}" method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary"Get Prediction</button>
+        <h2>Prediction Form</h2>
+        <h3>Este quastionário dá a possibilidade de o utilizador escolher os parâmetros que irão afetar a previsão feita pelo modelo.</h3>
+        <form action="{% url 'guest_prevision' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="gender" class="form-label">Gender</label>
+                <h6>Este parâmetro refere-se ao género do aluno. Se acha que existem mais do que estes géneros deverá consultar o padre local.</h6>
+                <select class="form-select" id="gender" name="gender">
+                    <option value="True">Male</option>
+                    <option value="False">Female</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="lunch" class="form-label">Lunch</label>
+                <h6>Este parâmetro refere-se ao tipo de almoço o aluno teve.</h6>
+                <select class="form-select" id="lunch" name="lunch">
+                    <option value="True">Standard</option>
+                    <option value="False">Free/Reduced</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="testPreparationCourse" class="form-label">Test Preparation Course</label>
+                <h6>Este parâmetro representa se o aluno completou as preparações para os testes.</h6>
+                <select class="form-select" id="testPreparationCourse" name="test_preparation_course">
+                    <option value="False">None</option>
+                    <option value="True">Completed</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="raceEthnicity" class="form-label">Race/Ethnicity</label>
+                <h6>Este parâmetro refere-se à raça dos alunos.</h6>
+                <select class="form.-select" id="raceEthnicity" name="race_ethnicity">
+                    <option value="group A">Group A</option>
+                    <option value="group B">Group B</option>
+                    <option value="group C">Group C</option>
+                    <option value="group D">Group D</option>
+                    <option value="group E">Group E</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="parentalLevelOfEducation" class="form-label">Parental Level of Education</label>
+                <h6>Este parâmetro refere-se ao tipo de educação que os pais do aluno tiveram.</h6>
+                <select class="form-select" id="parentalLevelOfEducation" name="parental_level_of_education">
+                    <option value="high school">High School</option>
+                    <option value="some college">Some College</option>
+                    <option value="bachelor's degree">Bachelor's Degree</option>
+                    <option value="some high school">Some High School</option>
+                    <option value="master's degree">Master's Degree</option>
+                    <option value="associate's degree">Associate's Degree</option>
+                </select>
+            </div>
+        <button type="submit" class="btn btn-primary">GET PREDICTION</button>
     </form>
 </div>
+
 {% endblock %}
 

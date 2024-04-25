@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -18,6 +21,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class PredictionDataForm(models.Model):
+    # Choices for various fields
     GENDER_CHOICES = [
         ('Male', 'Male'),
         ('Female', 'Female'),
@@ -50,6 +54,7 @@ class PredictionDataForm(models.Model):
         ("Associate's Degree", "Associate's Degree"),
     ]
 
+    # Fields for data input
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     lunch = models.CharField(max_length=20, choices=LUNCH_CHOICES)
     test_preparation_course = models.CharField(max_length=20, choices=TEST_PREPARATION_CHOICES)
@@ -59,14 +64,38 @@ class PredictionDataForm(models.Model):
     reading_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)])
     writing_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)])
 
+    # Field to indicate validation status
+    validated = models.BooleanField(default=False)
+
+
 
 class Prevision(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    gender = models.CharField(max_length=10, choices=PredictionDataForm.GENDER_CHOICES)
+    lunch = models.CharField(max_length=20, choices=PredictionDataForm.LUNCH_CHOICES)
+    test_preparation_course = models.CharField(max_length=20, choices=PredictionDataForm.TEST_PREPARATION_CHOICES)
+    race_ethnicity = models.CharField(max_length=20, choices=PredictionDataForm.RACE_ETHNICITY_CHOICES)
+    parental_level_of_education = models.CharField(max_length=50, choices=PredictionDataForm.PARENTAL_LEVEL_OF_EDUCATION_CHOICES)
     math_score = models.FloatField(null=True, blank=True)
     reading_score = models.FloatField(null=True, blank=True)
     writing_score = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+
+@receiver(post_save, sender=Prevision)
+def save_prediction_data(sender, instance, created, **kwargs):
+    if created:
+        prediction_data = PredictionDataForm.objects.create(
+            gender=instance.gender,
+            lunch=instance.lunch,
+            test_preparation_course=instance.test_preparation_course,
+            race_ethnicity=instance.race_ethnicity,
+            parental_level_of_education=instance.parental_level_of_education,
+            math_score=instance.math_score,
+            reading_score=instance.reading_score,
+            writing_score=instance.writing_score
+        )
 class ChangeLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)

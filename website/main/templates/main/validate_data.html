@@ -1,0 +1,54 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Data Input</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% if data_entries %}
+    <h3>Data Entries</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Gender</th>
+                <th>Lunch</th>
+                <th>Test Preparation Course</th>
+                <th>Race/Ethnicity</th>
+                <th>Parental Level of Education</th>
+                <th>Math Score</th>
+                <th>Reading Score</th>
+                <th>Writing Score</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in data_entries %}
+            <tr>
+                <td>{{ entry.gender }}</td>
+                <td>{{ entry.lunch }}</td>
+                <td>{{ entry.test_preparation_course }}</td>
+                <td>{{ entry.race_ethnicity }}</td>
+                <td>{{ entry.parental_level_of_education }}</td>
+                <td>{{ entry.math_score }}</td>
+                <td>{{ entry.reading_score }}</td>
+                <td>{{ entry.writing_score }}</td>
+                <td>
+                    <form action="{% url 'validate_data' entry.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Validate</button>
+                    </form>
+                    <form action="{% url 'delete_data' entry.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

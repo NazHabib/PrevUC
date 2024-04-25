@@ -12,6 +12,29 @@ from .models import Profile, Prevision
 from .models import PredictionDataForm
 from .decorators import role_required
 from .models import Notification
+from django.core.paginator import Paginator
+
+def validate_data(request):
+    if request.method == 'GET':
+        # Retrieve all data entries for validation
+        data_entries = PredictionDataForm.objects.all()
+        return render(request, 'main/validate_data.html', {'data_entries': data_entries})
+    elif request.method == 'POST':
+        # Handle form submission for data validation
+        data_entry_id = request.POST.get('data_entry_id')
+        action = request.POST.get('action')
+
+        if action == 'validate':
+            # Update data entry status to validated
+            data_entry = PredictionDataForm.objects.get(id=data_entry_id)
+            data_entry.validated = True
+            data_entry.save()
+        elif action == 'delete':
+            # Delete the data entry
+            data_entry = PredictionDataForm.objects.get(id=data_entry_id)
+            data_entry.delete()
+
+        return redirect('validate_data')
 
 @login_required
 def create_notification(request):
@@ -34,7 +57,8 @@ def notify_users(change):
 
 @login_required
 def view_notifications(request):
-    notifications = request.user.notifications.all()
+    # Retrieve all notifications from the database
+    notifications = Notification.objects.all().order_by('-created_at')
     return render(request, 'main/notifications.html', {'notifications': notifications})
 
 @login_required
@@ -132,7 +156,7 @@ def terms_of_service(request):
 
 def profile(request):
     return render(request, 'main/profile.html')
-
+"""
 @login_required
 def saved_previsions(request):
     if request.user.is_authenticated:
@@ -141,7 +165,7 @@ def saved_previsions(request):
     else:
         # Redirect or handle non-authenticated users
         return redirect('login')
-
+"""
 @login_required
 def account_delete(request):
     if request.method == 'POST':
@@ -211,12 +235,29 @@ def guest_prevision(request):
 
 
 
-def prediction_results(request):
-    prediction_result = request.session.get('prediction_result', {})
-    return render(request, 'main/results.html', {'prediction_result': prediction_result})
+@login_required
+def saved_previsions(request):
+    if request.method == 'POST':
+        # Save a new prevision
+        prediction_result = request.session.get('prediction_result', {})
+        new_prevision = Prevision.objects.create(
+            user=request.user,
+            math_score=prediction_result.get('math_score'),
+            reading_score=prediction_result.get('reading_score'),
+            writing_score=prediction_result.get('writing_score'),
+            gender=prediction_result.get('gender'),
+            lunch=prediction_result.get('lunch'),
+            test_preparation_course=prediction_result.get('test_preparation_course'),
+            race_ethnicity=prediction_result.get('race_ethnicity'),
+            parental_level_of_education=prediction_result.get('parental_level_of_education')
+        )
+        return redirect('saved_previsions')
 
+    # Fetch all previsions for the current user to display
+    previsions = Prevision.objects.filter(user=request.user)
+    return render(request, 'main/saved_previsions.html', {'previsions': previsions})
 
-@login_required  # Ensures only authenticated users can access this view
+@login_required
 def main_prevision(request):
     if request.method == 'POST':
         form = PrevisionForm(request.POST)
@@ -250,10 +291,39 @@ def main_prevision(request):
             prediction_result = predict_scores(df_input_encoded)
             request.session['prediction_result'] = {k: float(v) for k, v in prediction_result.items()}
 
+            # Save a new prevision
+            new_prevision = Prevision(
+                user=request.user,
+                gender=request.POST.get('gender'),
+                lunch=request.POST.get('lunch'),
+                test_preparation_course=request.POST.get('test_preparation_course'),
+                race_ethnicity=request.POST.get('race_ethnicity'),
+                parental_level_of_education=request.POST.get('parental_level_of_education'),
+                math_score=prediction_result.get('math_score'),
+                reading_score=prediction_result.get('reading_score'),
+                writing_score=prediction_result.get('writing_score')
+            )
+            new_prevision.save()
+
             return redirect('prediction_results')
     else:
         form = PrevisionForm()
     return render(request, 'main/main_prevision.html', {'form': form})
+
+
+def prediction_results(request):
+    prediction_result = request.session.get('prediction_result', {})
+    additional_params = request.session.get('additional_params', {})
+    return render(request, 'main/results.html', {
+        'prediction_result': prediction_result,
+        'gender': additional_params.get('gender', 'Not specified'),
+        'lunch': additional_params.get('lunch', 'Not specified'),
+        'test_preparation_course': additional_params.get('test_preparation_course', 'Not specified'),
+        'race_ethnicity': additional_params.get('race_ethnicity', 'Not specified'),
+        'parental_level_of_education': additional_params.get('parental_level_of_education', 'Not specified')
+    })
+
+
 @login_required
 def saved_previsions(request):
     if request.method == 'POST':

@@ -39,6 +39,9 @@
             <h3>For Data Scientists:</h3>
             <a href="{% url 'change_documentation' %}" class="btn btn-primary">Document Model Changes</a>
             <a href="{% url 'create_notification' %}" class="btn btn-primary">Create Notification</a>
+            <a href="{% url 'data_input' %}" class="btn btn-primary">Data Input</a>
+
+
         {% endif %}
 
         {% if request.user.profile.perfil == 'professor' %}
@@ -51,7 +54,6 @@
 <div class="container mt-3">
   <div class="row">
     <div class="col text-center">
-      <button onclick="history.back()" class="btn btn-secondary">Go to Previous Page</button>
       <a href="{% url 'saved_previsions' %}" class="btn btn-primary">Go to Saved Predictions</a>
     </div>
   </div>
@@ -73,7 +75,7 @@
       <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
         <h5 class="text-uppercase">Contact</h5>
         <ul class="list-unstyled">
-          <li>Email: contact@yoursite.com</li>
+          <li>Email: prevuc.prevision@gmail.com</li>
           <li>Phone: +123 456 7890</li>
         </ul>
       </div>
