@@ -78,7 +78,7 @@ def change_documentation(request):
 
 @login_required
 def view_notifications(request):
-    notifications = request.user.notifications.all()
+    notifications = Notification.objects.all()
     return render(request, 'main/notifications.html', {'notifications': notifications})
 
 
@@ -156,16 +156,7 @@ def terms_of_service(request):
 
 def profile(request):
     return render(request, 'main/profile.html')
-"""
-@login_required
-def saved_previsions(request):
-    if request.user.is_authenticated:
-        previsions = Prevision.objects.filter(user=request.user).order_by('-created_at')
-        return render(request, 'main/saved_previsions.html', {'previsions': previsions})
-    else:
-        # Redirect or handle non-authenticated users
-        return redirect('login')
-"""
+
 @login_required
 def account_delete(request):
     if request.method == 'POST':
@@ -257,57 +248,58 @@ def saved_previsions(request):
     previsions = Prevision.objects.filter(user=request.user)
     return render(request, 'main/saved_previsions.html', {'previsions': previsions})
 
+
 @login_required
 def main_prevision(request):
     if request.method == 'POST':
         form = PrevisionForm(request.POST)
         if form.is_valid():
-            input_data = form.cleaned_data
-            df_input = pd.DataFrame([input_data])
+            # Extract the form data without modifications
+            gender = form.cleaned_data['gender']
+            lunch = form.cleaned_data['lunch']
+            test_preparation_course = form.cleaned_data['test_preparation_course']
+            race_ethnicity = form.cleaned_data['race_ethnicity']
+            parental_level_of_education = form.cleaned_data['parental_level_of_education']
 
-            # Adjust columns to the expected format, similar to guest_prevision
+            # Prepare the input data for the predictive model, possibly modifying it
+            df_input = pd.DataFrame([form.cleaned_data])
             df_input.rename(columns={
                 'race_ethnicity': 'race/ethnicity',
-                'parental_level_of_education': 'parental level of education'
+                'parental_level_of_education': 'parental level of education',
             }, inplace=True)
-
-            # Convert boolean fields and one-hot encode as before
             df_input = convert_bool_string_to_numeric(df_input, ['gender', 'lunch', 'test_preparation_course'])
             df_input_encoded = pd.get_dummies(df_input, columns=['race/ethnicity', 'parental level of education'])
 
-            # Ensure DataFrame matches expected structure
+            # Make sure the DataFrame matches the expected structure
             expected_columns = [
-                # Add or remove columns based on model requirements
-                'gender', 'lunch', 'test preparation course', 'race/ethnicity_group A',
-                'race/ethnicity_group B', 'race/ethnicity_group C', 'race/ethnicity_group D',
-                'race/ethnicity_group E', "parental level of education_associate's degree",
-                "parental level of education_bachelor's degree", 'parental level of education_high school',
-                "parental level of education_master's degree", 'parental level of education_some college',
-                'parental level of education_some high school'
+                # Define the expected structure for the predictive model
             ]
             df_input_encoded = df_input_encoded.reindex(columns=expected_columns, fill_value=0).astype('float32')
 
-            # Predict and store results in the session
+            # Get the prediction results
             prediction_result = predict_scores(df_input_encoded)
-            request.session['prediction_result'] = {k: float(v) for k, v in prediction_result.items()}
 
-            # Save a new prevision
-            new_prevision = Prevision(
+            # Now, save the original user input and prediction result
+            new_prevision = Prevision.objects.create(
                 user=request.user,
-                gender=request.POST.get('gender'),
-                lunch=request.POST.get('lunch'),
-                test_preparation_course=request.POST.get('test_preparation_course'),
-                race_ethnicity=request.POST.get('race_ethnicity'),
-                parental_level_of_education=request.POST.get('parental_level_of_education'),
+                gender=gender,
+                lunch=lunch,
+                test_preparation_course=test_preparation_course,
+                race_ethnicity=race_ethnicity,
+                parental_level_of_education=parental_level_of_education,
                 math_score=prediction_result.get('math_score'),
                 reading_score=prediction_result.get('reading_score'),
-                writing_score=prediction_result.get('writing_score')
+                writing_score=prediction_result.get('writing_score'),
             )
-            new_prevision.save()
+
+            # Store prediction results in the session to pass to the results page
+            request.session['prediction_result'] = prediction_result
 
             return redirect('prediction_results')
+
     else:
         form = PrevisionForm()
+
     return render(request, 'main/main_prevision.html', {'form': form})
 
 
@@ -327,17 +319,23 @@ def prediction_results(request):
 @login_required
 def saved_previsions(request):
     if request.method == 'POST':
-        # Save a new prevision
-        prediction_result = request.session.get('prediction_result', {})
+        # Create a new prevision instance with data from the form
         new_prevision = Prevision(
             user=request.user,
-            math_score=prediction_result.get('math_score'),
-            reading_score=prediction_result.get('reading_score'),
-            writing_score=prediction_result.get('writing_score')
+            gender=request.session.get('prediction_data', {}).get('gender', 'Not specified'),
+            lunch=request.session.get('prediction_data', {}).get('lunch', 'Not specified'),
+            test_preparation_course=request.session.get('prediction_data', {}).get('test_preparation_course', 'Not specified'),
+            race_ethnicity=request.session.get('prediction_data', {}).get('race_ethnicity', 'Not specified'),
+            parental_level_of_education=request.session.get('prediction_data', {}).get('parental_level_of_education', 'Not specified'),
+            math_score=request.POST.get('math_score'),
+            reading_score=request.POST.get('reading_score'),
+            writing_score=request.POST.get('writing_score'),
         )
         new_prevision.save()
+
+        # Redirect to the page that shows all saved previsions
         return redirect('saved_previsions')
 
-    # Fetch all previsions for the current user to display
-    previsions = Prevision.objects.filter(user=request.user)
+    # If it's not a POST request, fetch all previsions to display
+    previsions = Prevision.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'main/saved_previsions.html', {'previsions': previsions})

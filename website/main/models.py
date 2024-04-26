@@ -71,7 +71,7 @@ class PredictionDataForm(models.Model):
 
 class Prevision(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    gender = models.CharField(max_length=10, choices=PredictionDataForm.GENDER_CHOICES)
+    gender = models.CharField(max_length=20, choices=PredictionDataForm.GENDER_CHOICES)
     lunch = models.CharField(max_length=20, choices=PredictionDataForm.LUNCH_CHOICES)
     test_preparation_course = models.CharField(max_length=20, choices=PredictionDataForm.TEST_PREPARATION_CHOICES)
     race_ethnicity = models.CharField(max_length=20, choices=PredictionDataForm.RACE_ETHNICITY_CHOICES)
@@ -105,8 +105,8 @@ class ChangeLog(models.Model):
 class Notification(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    users_notified = models.ManyToManyField(User, related_name='notifications')
 
     def __str__(self):
         return self.message
+
 

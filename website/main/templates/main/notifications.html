@@ -5,10 +5,12 @@
 {% if notifications %}
     <ul>
         {% for notification in notifications %}
-            <li>{{ notification.message }} ({{ notification.created_at }})</li>
+            <li>{{ notification.message }} ({{ notification.created_at|date:"Y-m-d H:i" }})</li>
         {% endfor %}
     </ul>
 {% else %}
     <p>No notifications found.</p>
 {% endif %}
 {% endblock %}
+
+

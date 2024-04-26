@@ -7,22 +7,21 @@
     <h2>Your Saved Previsions</h2>
     {% if user.is_authenticated %}
         {% for prevision in previsions %}
-            <div class="card mt-4">
-                <div class="card-body">
-                    <p><strong>Gender:</strong> {{ prevision.gender }}</p>
-                    <p><strong>Lunch:</strong> {{ prevision.lunch }}</p>
-                    <p><strong>Test Preparation Course:</strong> {{ prevision.test_preparation_course }}</p>
-                    <p><strong>Race/Ethnicity:</strong> {{ prevision.race_ethnicity }}</p>
-                    <p><strong>Parental Level of Education:</strong> {{ prevision.parental_level_of_education }}</p>
-                    <p><strong>Math Score:</strong> {{ prevision.math_score }}</p>
-                    <p><strong>Reading Score:</strong> {{ prevision.reading_score }}</p>
-                    <p><strong>Writing Score:</strong> {{ prevision.writing_score }}</p>
-                    <p class="text-muted">Saved on: {{ prevision.created_at|date:"Y-m-d H:i" }}</p>
-                </div>
-            </div>
-        {% empty %}
-            <p>You have no saved previsions.</p>
-        {% endfor %}
+    <div class="card mt-4">
+        <div class="card-body">
+            <p><strong>Gender:</strong> {{ prevision.get_gender_display }}</p>
+            <p><strong>Lunch:</strong> {{ prevision.get_lunch_display }}</p>
+            <p><strong>Test Preparation Course:</strong> {{ prevision.get_test_preparation_course_display }}</p>
+            <p><strong>Race/Ethnicity:</strong> {{ prevision.get_race_ethnicity_display }}</p>
+            <p><strong>Parental Level of Education:</strong> {{ prevision.get_parental_level_of_education_display }}</p>
+            <p><strong>Math Score:</strong> {{ prevision.math_score }}</p>
+            <p><strong>Reading Score:</strong> {{ prevision.reading_score }}</p>
+            <p><strong>Writing Score:</strong> {{ prevision.writing_score }}</p>
+            <p class="text-muted">Saved on: {{ prevision.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+    </div>
+{% endfor %}
+
     {% else %}
         <p>You need to log in to view or save previsions.</p>
         <div class="mt-4">
