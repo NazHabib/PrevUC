@@ -13,6 +13,7 @@ urlpatterns = [
     path('delete_account/', views.account_delete, name='account_delete'),
     path('guest-main/', views.guest_prevision, name='guest_prevision'),
     path('results/', views.prediction_results, name='prediction_results'),
+    path('subscribe/', views.subscribe_newsletter, name='subscribe_newsletter'),
     path('submit-prevision-form/', views.guest_prevision, name='guest_prevision'),
     path('edit_account/', views.edit_account, name='edit_account'),
     path('main-prevision/', views.main_prevision, name='main_prevision'),

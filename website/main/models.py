@@ -2,6 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
 
 
 class Profile(models.Model):
@@ -16,27 +25,19 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.name}'s Profile"
 
-
-from django.core.validators import MaxValueValidator, MinValueValidator
-
-
-class PredictionDataForm(models.Model):
-    # Choices for various fields
+class CommonInfo(models.Model):
     GENDER_CHOICES = [
         ('Male', 'Male'),
         ('Female', 'Female'),
     ]
-
     LUNCH_CHOICES = [
         ('Standard', 'Standard'),
         ('Free/Reduced', 'Free/Reduced'),
     ]
-
     TEST_PREPARATION_CHOICES = [
         ('None', 'None'),
         ('Completed', 'Completed'),
     ]
-
     RACE_ETHNICITY_CHOICES = [
         ('Group A', 'Group A'),
         ('Group B', 'Group B'),
@@ -44,7 +45,6 @@ class PredictionDataForm(models.Model):
         ('Group D', 'Group D'),
         ('Group E', 'Group E'),
     ]
-
     PARENTAL_LEVEL_OF_EDUCATION_CHOICES = [
         ('High School', 'High School'),
         ('Some College', 'Some College'),
@@ -54,31 +54,23 @@ class PredictionDataForm(models.Model):
         ("Associate's Degree", "Associate's Degree"),
     ]
 
-    # Fields for data input
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
     lunch = models.CharField(max_length=20, choices=LUNCH_CHOICES)
     test_preparation_course = models.CharField(max_length=20, choices=TEST_PREPARATION_CHOICES)
     race_ethnicity = models.CharField(max_length=20, choices=RACE_ETHNICITY_CHOICES)
     parental_level_of_education = models.CharField(max_length=50, choices=PARENTAL_LEVEL_OF_EDUCATION_CHOICES)
-    math_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)])
-    reading_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)])
-    writing_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)])
+    math_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    reading_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    writing_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
 
-    # Field to indicate validation status
+    class Meta:
+        abstract = True
+
+class PredictionDataForm(CommonInfo):
     validated = models.BooleanField(default=False)
 
-
-
-class Prevision(models.Model):
+class Prevision(CommonInfo):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    gender = models.CharField(max_length=20, choices=PredictionDataForm.GENDER_CHOICES)
-    lunch = models.CharField(max_length=20, choices=PredictionDataForm.LUNCH_CHOICES)
-    test_preparation_course = models.CharField(max_length=20, choices=PredictionDataForm.TEST_PREPARATION_CHOICES)
-    race_ethnicity = models.CharField(max_length=20, choices=PredictionDataForm.RACE_ETHNICITY_CHOICES)
-    parental_level_of_education = models.CharField(max_length=50, choices=PredictionDataForm.PARENTAL_LEVEL_OF_EDUCATION_CHOICES)
-    math_score = models.FloatField(null=True, blank=True)
-    reading_score = models.FloatField(null=True, blank=True)
-    writing_score = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
