@@ -11,8 +11,68 @@
     crossorigin="anonymous"
   />
   <title>PrevUC</title>
+  {% load static %}
+  <style>
+    .navbar-brand { font-weight: bold; color: #fff; }
+    .btn-guest { background-color: #198754; } /* Bootstrap success color */
+    footer .row div { min-height: 150px; }
+    .newsletter-signup { padding-left: 2rem; }
+    @media (max-width: 768px) {
+      footer .row div { min-height: auto; }
+      .newsletter-signup { padding-left: 0; }
+    }
+    /* New styles for background image */
+
+    body {
+      background-image: url('{% static "main/lavend.jpg" %}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #808080;
+    }
+    body {
+    font-family: 'Arial', sans-serif;
+    color: #fff; /* Change text color to white for better contrast */
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%; /* Full width to match the container */
+    max-width: 300px; /* Maximum width of the input boxes */
+    height: 40px;
+    font-size: 16px;
+    padding: 5px 10px; /* Padding inside the input boxes */
+    background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent white for visibility */
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 4px; /* Rounded corners */
+    margin: 0 auto;
+}
+
+button {
+    width: 100%; /* Full width to match the container */
+    max-width: 320px; /* Maximum width of the button */
+    height: 45px;
+    font-size: 18px;
+    background-color: #0056b3; /* Example button color */
+    color: #fff; /* White text on the button */
+    border: none;
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+
+
+    footer {
+    color: #123;
+  }
+    .welcome-sign {
+      font-size: 2rem;
+      margin-top: 100px;
+      margin-bottom:100px;
+    }
+  </style>
 </head>
 <body>
+{% load custom_tags %}
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       {% if user.is_authenticated %}
@@ -30,12 +90,15 @@
       {% endif %}
     </ul>
   </nav>
-  <div class="container">
+  <div class="container text-center">
     {% if request.resolver_match.url_name == 'base' and not user.is_authenticated %}
     <div class="my-4">
+      <div class="welcome-sign">
+      Welcome to PrevUC!
+      </div>
       <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
       <a href="{% url 'sign_up' %}" class="btn btn-secondary">Sign Up</a>
-      <a href="{% url 'guest_prevision' %}" class="btn btn-success">Enter as Guest</a>
+      <a href="{% url 'guest_prevision' %}" class="btn btn-guest">Enter as Guest</a>
     </div>
     {% endif %}
     {% block content %}{% endblock %}
@@ -59,9 +122,9 @@
           </ul>
         </div>
 
-        <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
-          <h5 class="text-uppercase">News</h5>
-          <p>Stay updated with our latest news and updates by signing up for our newsletter.</p>
+        <div class="col-lg-4 col-md-12 mb-4 mb-md-0 newsletter-signup">
+          <h5 class="text-uppercase">Notícias</h5>
+          <p>Fique atualizado com notícias e atualizações, inscrevendo-se ao newsletter.</p>
           <form method="post" action="{% url 'subscribe_newsletter' %}">
             {% csrf_token %}
             <div class="form-outline form-white mb-4">
@@ -89,6 +152,7 @@
   ></script>
 </body>
 </html>
+
 
 
 

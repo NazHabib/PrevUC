@@ -22,5 +22,7 @@ urlpatterns = [
     path('change-documentation/', views.change_documentation, name='change_documentation'),
     path('notifications/', views.view_notifications, name='view_notifications'),
     path('create-notification/', views.create_notification, name='create_notification'),
-    path('validate-data/', views.validate_data, name='validate_data'),
+    path('data_entries/', views.list_data_entries, name='list_data_entries'),
+    path('validate_data/<int:entry_id>/', views.validate_data, name='validate_data'),
+    path('delete_data/<int:entry_id>/', views.delete_data, name='delete_data'),
 ]

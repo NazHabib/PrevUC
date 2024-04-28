@@ -2,12 +2,6 @@
 
 {% block content %}
 <div class="container">
-    <h2>Data Input</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
     {% if data_entries %}
     <h3>Data Entries</h3>
     <table class="table">
@@ -27,28 +21,34 @@
         <tbody>
             {% for entry in data_entries %}
             <tr>
-                <td>{{ entry.gender }}</td>
-                <td>{{ entry.lunch }}</td>
-                <td>{{ entry.test_preparation_course }}</td>
+                <td>{{ entry.get_gender_display }}</td>
+                <td>{{ entry.get_lunch_display }}</td>
+                <td>{{ entry.get_test_preparation_course_display }}</td>
                 <td>{{ entry.race_ethnicity }}</td>
                 <td>{{ entry.parental_level_of_education }}</td>
                 <td>{{ entry.math_score }}</td>
                 <td>{{ entry.reading_score }}</td>
                 <td>{{ entry.writing_score }}</td>
                 <td>
+                    <!-- Form for validation -->
                     <form action="{% url 'validate_data' entry.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-success">Validate</button>
+                        <input type="hidden" name="data_entry_id" value="{{ entry.id }}" />
+                        <button type="submit" class="btn btn-success" name="action" value="validate">Validate</button>
                     </form>
+                    <!-- Form for deletion -->
                     <form action="{% url 'delete_data' entry.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <input type="hidden" name="data_entry_id" value="{{ entry.id }}" />
+                        <button type="submit" class="btn btn-danger" name="action" value="delete">Delete</button>
                     </form>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <p>No data entries found. Please submit some data.</p>
     {% endif %}
 </div>
 {% endblock %}

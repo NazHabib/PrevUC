@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "main.apps.MainConfig",
     "crispy_forms",
-    "crispy_bootstrap5"
+    "crispy_bootstrap5",
+    "django_extensions",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -93,6 +94,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -128,12 +130,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'main/static/'
+# This is the base URL to use when referring to static files in templates or views
+STATIC_URL = '/static/'
+
+# This is the absolute path to the directory where 'collectstatic' will collect static files for deployment
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
 
 # Add the STATICFILES_DIRS setting if it's not already present
+# Additional locations of static files
 STATICFILES_DIRS = [
-    BASE_DIR / 'main/static',
+    BASE_DIR / 'main' / 'static',  # Adjust the path according to your project structure
 ]
+
+
 
 
 # Default primary key field type

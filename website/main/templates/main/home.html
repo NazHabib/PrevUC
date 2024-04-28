@@ -10,10 +10,6 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">YourSite</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
@@ -39,10 +35,8 @@
             <h3>For Data Scientists:</h3>
             <a href="{% url 'change_documentation' %}" class="btn btn-primary">Document Model Changes</a>
             <a href="{% url 'create_notification' %}" class="btn btn-primary">Create Notification</a>
-            <a href="{% url 'data_input' %}" class="btn btn-primary">Data Input</a>
-
-
-        {% endif %}
+            <a href="{% url 'list_data_entries' %}" class="btn btn-primary">Data Entries</a>
+    {% endif %}
 
         {% if request.user.profile.perfil == 'professor' %}
             <h3>For Professor:</h3>

@@ -17,7 +17,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     PERFIL_CHOICES = (
         ('professor', 'Professor'),
-        ('data scientist', 'DataScientist'),
+        ('data scientist', 'Data Scientist'),
         ('user', 'User'),
     )
     perfil = models.CharField(max_length=15, choices=PERFIL_CHOICES)
@@ -25,7 +25,8 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.name}'s Profile"
 
-class CommonInfo(models.Model):
+
+class PredictionDataForm(models.Model):
     GENDER_CHOICES = [
         ('Male', 'Male'),
         ('Female', 'Female'),
@@ -62,23 +63,28 @@ class CommonInfo(models.Model):
     math_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
     reading_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
     writing_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
-
-    class Meta:
-        abstract = True
-
-class PredictionDataForm(CommonInfo):
     validated = models.BooleanField(default=False)
 
-class Prevision(CommonInfo):
+
+class Prevision(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    gender = models.CharField(max_length=20, choices=PredictionDataForm.GENDER_CHOICES)
+    lunch = models.CharField(max_length=20, choices=PredictionDataForm.LUNCH_CHOICES)
+    test_preparation_course = models.CharField(max_length=20, choices=PredictionDataForm.TEST_PREPARATION_CHOICES)
+    race_ethnicity = models.CharField(max_length=20, choices=PredictionDataForm.RACE_ETHNICITY_CHOICES)
+    parental_level_of_education = models.CharField(max_length=50, choices=PredictionDataForm.PARENTAL_LEVEL_OF_EDUCATION_CHOICES)
+    math_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    reading_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    writing_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
 
 
 
 @receiver(post_save, sender=Prevision)
 def save_prediction_data(sender, instance, created, **kwargs):
     if created:
-        prediction_data = PredictionDataForm.objects.create(
+        PredictionDataForm.objects.create(
             gender=instance.gender,
             lunch=instance.lunch,
             test_preparation_course=instance.test_preparation_course,
@@ -88,11 +94,15 @@ def save_prediction_data(sender, instance, created, **kwargs):
             reading_score=instance.reading_score,
             writing_score=instance.writing_score
         )
+
+
+
 class ChangeLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 class Notification(models.Model):
     message = models.TextField()

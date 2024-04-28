@@ -4,9 +4,9 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
-
+from django.views.decorators.http import require_POST
 from .forms import PrevisionForm, PrevisionInputForm, ChangeForm, NotificationForm
 from .forms import RegisterForm
 from .predictor import predict_scores
@@ -15,28 +15,37 @@ from .models import Profile, Prevision, NewsletterSubscriber
 from .models import PredictionDataForm
 from .decorators import role_required
 from .models import Notification
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from .models import PredictionDataForm
+from django.contrib import messages
 
-def validate_data(request):
-    if request.method == 'GET':
-        # Retrieve all data entries for validation
-        data_entries = PredictionDataForm.objects.all()
-        return render(request, 'main/validate_data.html', {'data_entries': data_entries})
-    elif request.method == 'POST':
-        # Handle form submission for data validation
-        data_entry_id = request.POST.get('data_entry_id')
-        action = request.POST.get('action')
 
-        if action == 'validate':
-            # Update data entry status to validated
-            data_entry = PredictionDataForm.objects.get(id=data_entry_id)
-            data_entry.validated = True
-            data_entry.save()
-        elif action == 'delete':
-            # Delete the data entry
-            data_entry = PredictionDataForm.objects.get(id=data_entry_id)
-            data_entry.delete()
+@login_required
+def list_data_entries(request):
+    data_entries = PredictionDataForm.objects.all()
+    return render(request, 'main/validate_data.html', {'data_entries': data_entries})
 
-        return redirect('validate_data')
+@login_required
+@require_POST
+def delete_data(request, entry_id):
+    data_entry = get_object_or_404(PredictionDataForm, id=entry_id)
+    data_entry.delete()
+    messages.success(request, "Data deleted successfully.")
+    return redirect('list_data_entries')
+
+@login_required
+@require_POST
+def validate_data(request, entry_id):
+    data_entry = get_object_or_404(PredictionDataForm, id=entry_id)
+    data_entry.validated = True
+    data_entry.save()
+    messages.success(request, "Data validated successfully.")
+    return redirect('list_data_entries')
+
+
 
 @login_required
 def create_notification(request):
@@ -57,11 +66,6 @@ def notify_users(change):
         notification.users_notified.add(user)
     notification.save()
 
-@login_required
-def view_notifications(request):
-    # Retrieve all notifications from the database
-    notifications = Notification.objects.all().order_by('-created_at')
-    return render(request, 'main/notifications.html', {'notifications': notifications})
 
 @login_required
 def change_documentation(request):
@@ -132,8 +136,11 @@ def edit_account(request):
     })
 
 
+
 def base(request):
-    return render(request, 'main/base.html')
+    lavender_image_url = staticfiles_storage.url('main/lavend.jpg')
+    context = {'lavender_image_url': lavender_image_url}
+    return render(request, 'main/base.html', context)
 
 def home(request):
     return render(request, 'main/home.html')
@@ -226,124 +233,59 @@ def guest_prevision(request):
         form = PrevisionForm()
     return render(request, 'main/guest_main.html', {'form': form})
 
+
 def main_prevision(request):
     if request.method == 'POST':
         form = PrevisionForm(request.POST)
         if form.is_valid():
-            # Extract the form data without modifications
-            gender = form.cleaned_data['gender']
-            lunch = form.cleaned_data['lunch']
-            test_preparation_course = form.cleaned_data['test_preparation_course']
-            race_ethnicity = form.cleaned_data['race_ethnicity']
-            parental_level_of_education = form.cleaned_data['parental_level_of_education']
+            # Prepare data for prediction
+            prediction_data = {k: v for k, v in form.cleaned_data.items()}
+            request.session['prediction_data'] = prediction_data  # Store user input
 
-            df_input = pd.DataFrame([form.cleaned_data])
-            df_input.rename(columns={
-                'race_ethnicity': 'race/ethnicity',
-                'parental_level_of_education': 'parental level of education',
-            }, inplace=True)
-            df_input = convert_bool_string_to_numeric(df_input, ['gender', 'lunch', 'test_preparation_course'])
-            df_input_encoded = pd.get_dummies(df_input, columns=['race/ethnicity', 'parental level of education'])
-
-            # Make sure the DataFrame matches the expected structure
-            expected_columns = [
-                # Define the expected structure for the predictive model
-            ]
-            df_input_encoded = df_input_encoded.reindex(columns=expected_columns, fill_value=0).astype('float32')
-
-            # Get the prediction results
-            prediction_result = predict_scores(df_input_encoded)
-
-            # Now, save the original user input and prediction result
-            new_prevision = Prevision.objects.create(
-                user=request.user,
-                gender=gender,
-                lunch=lunch,
-                test_preparation_course=test_preparation_course,
-                race_ethnicity=race_ethnicity,
-                parental_level_of_education=parental_level_of_education,
-                math_score=prediction_result.get('math_score'),
-                reading_score=prediction_result.get('reading_score'),
-                writing_score=prediction_result.get('writing_score'),
-            )
-
-            # Store prediction results in the session to pass to the results page
+            # Predict and store results
+            prediction_result = predict_scores(form.cleaned_data)  # Assumed function
             request.session['prediction_result'] = prediction_result
 
             return redirect('prediction_results')
-
     else:
         form = PrevisionForm()
-
     return render(request, 'main/main_prevision.html', {'form': form})
-
-
-@login_required
-def saved_previsions(request):
-    if request.method == 'POST':
-        # Save a new prevision
-        prediction_result = request.session.get('prediction_result', {})
-        new_prevision = Prevision.objects.create(
-            user=request.user,
-            math_score=prediction_result.get('math_score'),
-            reading_score=prediction_result.get('reading_score'),
-            writing_score=prediction_result.get('writing_score'),
-            gender=prediction_result.get('gender'),
-            lunch=prediction_result.get('lunch'),
-            test_preparation_course=prediction_result.get('test_preparation_course'),
-            race_ethnicity=prediction_result.get('race_ethnicity'),
-            parental_level_of_education=prediction_result.get('parental_level_of_education')
-        )
-        return redirect('saved_previsions')
-
-    # Fetch all previsions for the current user to display
-    previsions = Prevision.objects.filter(user=request.user)
-    return render(request, 'main/saved_previsions.html', {'previsions': previsions})
 
 
 def prediction_results(request):
     prediction_result = request.session.get('prediction_result', {})
-    additional_params = request.session.get('additional_params', {})
+    prediction_data = request.session.get('prediction_data', {})
     return render(request, 'main/results.html', {
         'prediction_result': prediction_result,
-        'gender': additional_params.get('gender', 'Not specified'),
-        'lunch': additional_params.get('lunch', 'Not specified'),
-        'test_preparation_course': additional_params.get('test_preparation_course', 'Not specified'),
-        'race_ethnicity': additional_params.get('race_ethnicity', 'Not specified'),
-        'parental_level_of_education': additional_params.get('parental_level_of_education', 'Not specified')
+        'prediction_data': prediction_data
     })
 
 
+
+@login_required
 @login_required
 def saved_previsions(request):
     if request.method == 'POST':
-        # Retrieve data from session or request as necessary
-        prevision_data = request.session.get('prediction_data', {})
+        prediction_data = request.session.get('prediction_data', {})
         prediction_result = request.session.get('prediction_result', {})
 
-        # Create and save the new prevision instance
-        new_prevision = Prevision(
+        new_prevision = Prevision.objects.create(
             user=request.user,
-            gender=prevision_data['gender'],
-            lunch=prevision_data['lunch'],
-            test_preparation_course=prevision_data['test_preparation_course'],
-            race_ethnicity=prevision_data['race_ethnicity'],
-            parental_level_of_education=prevision_data['parental_level_of_education'],
+            gender=prediction_data['gender'],
+            lunch=prediction_data['lunch'],
+            test_preparation_course=prediction_data['test_preparation_course'],
+            race_ethnicity=prediction_data['race_ethnicity'],
+            parental_level_of_education=prediction_data['parental_level_of_education'],
             math_score=prediction_result.get('math_score'),
             reading_score=prediction_result.get('reading_score'),
             writing_score=prediction_result.get('writing_score'),
         )
-        new_prevision.save()
+        return redirect('list_previsions')
 
-        return redirect('saved_previsions')
-
-    # If not a POST request, fetch all previsions to display
-    previsions = Prevision.objects.filter(user=request.user).order_by('-created_at')
+    previsions = Prevision.objects.filter(user=request.user)
     return render(request, 'main/saved_previsions.html', {'previsions': previsions})
 
 
-
-from django.http import JsonResponse
 
 def subscribe_newsletter(request):
     if request.method == 'POST':
