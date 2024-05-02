@@ -1,32 +1,76 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Saved Previsions{% endblock %}
-
 {% block content %}
 <div class="container">
-    <h2>Your Saved Previsions</h2>
-    {% if user.is_authenticated %}
-        {% for prevision in previsions %}
-    <div class="card mt-4">
-        <div class="card-body">
-            <p><strong>Gender:</strong> {{ prevision.get_gender_display }}</p>
-            <p><strong>Lunch:</strong> {{ prevision.get_lunch_display }}</p>
-            <p><strong>Test Preparation Course:</strong> {{ prevision.get_test_preparation_course_display }}</p>
-            <p><strong>Race/Ethnicity:</strong> {{ prevision.get_race_ethnicity_display }}</p>
-            <p><strong>Parental Level of Education:</strong> {{ prevision.get_parental_level_of_education_display }}</p>
-            <p><strong>Math Score:</strong> {{ prevision.math_score }}</p>
-            <p><strong>Reading Score:</strong> {{ prevision.reading_score }}</p>
-            <p><strong>Writing Score:</strong> {{ prevision.writing_score }}</p>
-            <p class="text-muted">Saved on: {{ prevision.created_at|date:"Y-m-d H:i" }}</p>
-        </div>
-    </div>
-{% endfor %}
+    <style>
+            /* Base styles for overall consistency */
 
+
+
+/* Styling for the table */
+.table {
+    width: 100%; /* Full-width to maximize space */
+    border-collapse: collapse; /* Collapses borders between cells */
+    margin-top: 20px; /* Adds space above the table */
+    background-color: #fff; /* White background for the table */
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1); /* Adds subtle shadow for depth */
+}
+
+.table th, .table td {
+    padding: 12px 15px; /* Adequate padding for cell content */
+    border: 1px solid #ddd; /* Light grey border for each cell */
+    text-align: left; /* Aligns text to the left */
+}
+
+.table th {
+    background-color: #007BFF; /* Blue background for header cells */
+    color: white; /* White text for headers */
+    text-transform: uppercase; /* Makes header text uppercase */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2; /* Zebra striping for rows */
+}
+
+
+
+    </style>
+    <h2>Saved Predictions</h2>
+    {% if previsions %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Gender</th>
+                    <th>Lunch</th>
+                    <th>Test Preparation Course</th>
+                    <th>Race/Ethnicity</th>
+                    <th>Parental Level of Education</th>
+                    <th>Math Score</th>
+                    <th>Reading Score</th>
+                    <th>Writing Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prevision in previsions %}
+                    <tr>
+                        <td>{{ prevision.gender }}</td>
+                        <td>{{ prevision.lunch }}</td>
+                        <td>{{ prevision.test_preparation_course }}</td>
+                        <td>{{ prevision.race_ethnicity }}</td>
+                        <td>{{ prevision.parental_level_of_education }}</td>
+                        <td>{{ prevision.math_score }}</td>
+                        <td>{{ prevision.reading_score }}</td>
+                        <td>{{ prevision.writing_score }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8">No saved predictions yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
-        <p>You need to log in to view or save previsions.</p>
-        <div class="mt-4">
-            <a href="{% url 'login' %}" class="btn btn-primary">Login to Save Previsions</a>
-        </div>
+        <p>No saved predictions yet.</p>
     {% endif %}
 </div>
 {% endblock %}

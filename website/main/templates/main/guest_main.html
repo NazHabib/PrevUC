@@ -6,7 +6,7 @@
 <div class="container mt-5">
         {% csrf_token %}
         <h2>Prediction Form</h2>
-        <h3>Este quastionário dá a possibilidade de o utilizador escolher os parâmetros que irão afetar a previsão feita pelo modelo.</h3>
+        <h3>Este questionário dá a possibilidade de o utilizador escolher os parâmetros que irão afetar a previsão feita pelo modelo.</h3>
         <form action="{% url 'guest_prevision' %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">

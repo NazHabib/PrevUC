@@ -60,9 +60,9 @@ class PredictionDataForm(models.Model):
     test_preparation_course = models.CharField(max_length=20, choices=TEST_PREPARATION_CHOICES)
     race_ethnicity = models.CharField(max_length=20, choices=RACE_ETHNICITY_CHOICES)
     parental_level_of_education = models.CharField(max_length=50, choices=PARENTAL_LEVEL_OF_EDUCATION_CHOICES)
-    math_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
-    reading_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
-    writing_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    math_score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    reading_score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    writing_score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
     validated = models.BooleanField(default=False)
 
 
@@ -75,9 +75,9 @@ class Prevision(models.Model):
     test_preparation_course = models.CharField(max_length=20, choices=PredictionDataForm.TEST_PREPARATION_CHOICES)
     race_ethnicity = models.CharField(max_length=20, choices=PredictionDataForm.RACE_ETHNICITY_CHOICES)
     parental_level_of_education = models.CharField(max_length=50, choices=PredictionDataForm.PARENTAL_LEVEL_OF_EDUCATION_CHOICES)
-    math_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
-    reading_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
-    writing_score = models.FloatField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    math_score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    reading_score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
+    writing_score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True, blank=True)
 
 
 

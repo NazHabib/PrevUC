@@ -6,9 +6,6 @@
     <p>Math Score: {{ prediction_result.math_score }}</p>
     <p>Reading Score: {{ prediction_result.reading_score }}</p>
     <p>Writing Score: {{ prediction_result.writing_score }}</p>
-
-    <a href="{% url 'guest_prevision' %}">Make another prediction</a>
-</div>
     {% if user.is_authenticated %}
         <form action="{% url 'saved_previsions' %}" method="post">
             {% csrf_token %}
@@ -18,4 +15,5 @@
         <p>You must be logged in to save previsions.</p>
         <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
     {% endif %}
+</div>
 {% endblock %}

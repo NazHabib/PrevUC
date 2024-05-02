@@ -3,9 +3,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.optimizers import Adam
-import matplotlib.pyplot as plt
-import tensorflow as tf
-import numpy as np
+
 
 file_path = 'StudentsPerformance.csv'
 data = pd.read_csv(file_path)
@@ -16,12 +14,12 @@ data['test preparation course'] = data['test preparation course'].map({'complete
 data = pd.get_dummies(data, columns=['race/ethnicity', 'parental level of education'])
 
 feature_columns = data.columns.drop(['math score', 'reading score', 'writing score'])
-X_target1 = data[feature_columns].astype('float32')
-y_target1 = data['math score'].astype('float32')
-X_target2 = data[feature_columns].astype('float32')
-y_target2 = data['reading score'].astype('float32')
-X_target3 = data[feature_columns].astype('float32')
-y_target3 = data['writing score'].astype('float32')
+X_target1 = data[feature_columns].astype('int32')
+y_target1 = data['math score'].astype('int32')
+X_target2 = data[feature_columns].astype('int32')
+y_target2 = data['reading score'].astype('int32')
+X_target3 = data[feature_columns].astype('int32')
+y_target3 = data['writing score'].astype('int32')
 
 X_train, X_test, y_train, y_test = train_test_split(X_target1, y_target1, test_size=0.2, random_state=42)
 X_train2, X_test2, y_train2, y_test2 = train_test_split(X_target2, y_target2, test_size=0.2, random_state=43)

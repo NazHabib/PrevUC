@@ -138,6 +138,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 
+
+
 # Add the STATICFILES_DIRS setting if it's not already present
 # Additional locations of static files
 STATICFILES_DIRS = [
