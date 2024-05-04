@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.urls import path, include
 from . import views
 
@@ -6,10 +7,12 @@ urlpatterns = [
     path('home', views.home, name='home'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('sign-up', views.sign_up, name='sign_up'),
+    path('view-changes/', views.view_changes, name='view_changes'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('terms-of-service/', views.terms_of_service, name='terms_of_service'),
     path('results/', views.prediction_results, name='prediction_results'),
     path('profile/', views.profile, name='profile'),
+    path('delete-prevision/<int:prevision_id>/', views.delete_prevision, name='delete_prevision'),
     path('saved-previsions/', views.saved_previsions, name='saved_previsions'),
     path('delete_account/', views.account_delete, name='account_delete'),
     path('guest-main/', views.guest_prevision, name='guest_prevision'),
@@ -25,4 +28,13 @@ urlpatterns = [
     path('data_entries/', views.list_data_entries, name='list_data_entries'),
     path('validate_data/<int:entry_id>/', views.validate_data, name='validate_data'),
     path('delete_data/<int:entry_id>/', views.delete_data, name='delete_data'),
+    path('feedback/', views.add_feedback, name='feedback'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('feedback-thank-you/', lambda request: render(request, 'feedback_thank_you.html'), name='feedback_thank_you'),
+    path('model_configuration/', views.model_configuration_view, name='model_configuration'),
+    path('model_configuration_list/', views.model_configuration_list_view, name='model_configuration_list'),
+    path('configure/', views.model_configuration_view, name='configure_model'),
+    path('configure/<int:pk>/', views.model_configuration_view, name='edit_configuration'),
+    path('metrics/', views.model_metrics_list, name='model_metrics_list'),
+    path('configure/<int:pk>/', views.model_configuration_view, name='edit_configuration'),
 ]

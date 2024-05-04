@@ -112,3 +112,35 @@ class Notification(models.Model):
         return self.message
 
 
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback from {self.user.username} on {self.created_at.strftime('%Y-%m-%d')}"
+
+
+class ModelConfiguration(models.Model):
+    num_layers = models.IntegerField(default=3)
+    neurons_per_layer = models.CharField(max_length=255, default='[64, 64, 64]')
+    epochs = models.IntegerField(default=10)
+    learning_rate = models.FloatField(default=0.01)
+    batch_size = models.IntegerField(default=16)
+    rating = models.IntegerField(default=0, blank=True, null=True)  # Rating field added
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Configuration {self.id} - Rating: {self.rating or 'Not rated'}"
+
+class ModelMetrics(models.Model):
+    configuration = models.ForeignKey(ModelConfiguration, on_delete=models.CASCADE)
+    loss = models.FloatField()
+    mse = models.FloatField()
+    mae = models.FloatField()
+    rmse = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Metrics for Configuration {self.configuration.id}"

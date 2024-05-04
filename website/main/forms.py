@@ -1,9 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, PredictionDataForm
+from .models import Profile, PredictionDataForm, Feedback
 from .models import ChangeLog
 from .models import Notification
+from .models import ModelConfiguration
 
 class NotificationForm(forms.ModelForm):
     class Meta:
@@ -95,3 +96,25 @@ class PrevisionInputForm(forms.ModelForm):
     class Meta:
         model = PredictionDataForm
         fields = ['gender', 'lunch', 'test_preparation_course', 'race_ethnicity', 'parental_level_of_education', 'math_score', 'reading_score', 'writing_score']
+
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Your feedback...'})
+        }
+
+
+class ModelConfigurationForm(forms.ModelForm):
+    class Meta:
+        model = ModelConfiguration
+        fields = ['num_layers', 'neurons_per_layer', 'epochs', 'learning_rate', 'batch_size', 'rating']
+
+class ModelSelectionForm(forms.Form):
+    model_type = forms.ChoiceField(choices=[
+        ('model_math', 'model_math'),
+        ('model_reading', 'model_reading'),
+        ('model_writing', 'model_writing')
+    ])

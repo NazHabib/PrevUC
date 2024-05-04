@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="container">
-    <style>
-            /* Base styles for overall consistency */
+        <style>
+
 
 
 
@@ -48,6 +48,7 @@
                     <th>Math Score</th>
                     <th>Reading Score</th>
                     <th>Writing Score</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,6 +62,9 @@
                         <td>{{ prevision.math_score }}</td>
                         <td>{{ prevision.reading_score }}</td>
                         <td>{{ prevision.writing_score }}</td>
+                        <td>
+                            <button class="btn btn-danger" data-prevision-id="{{ prevision.id }}">Delete</button>
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>
@@ -73,4 +77,51 @@
         <p>No saved predictions yet.</p>
     {% endif %}
 </div>
+
+<script>
+    // get the CSRF token from the cookie
+    const csrfToken = getCookie('csrftoken');
+
+    // add an event listener to each delete button
+    document.querySelectorAll('.btn-danger').forEach(button => {
+        button.addEventListener('click', event => {
+            const previsionId = event.target.dataset.previsionId;
+            fetch(`/delete-prevision/${previsionId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+          .then(response => response.json())
+          .then(data => {
+                console.log(`Deleted prevision ${previsionId}`);
+                // remove the row from the table
+                const row = event.target.parentNode.parentNode;
+                row.classList.add('fadeOut'); // add a fade-out effect
+                setTimeout(() => {
+                    row.remove(); // remove the row after the fade-out effect
+                }, 500); // adjust the timeout to match the fade-out effect duration
+            })
+          .catch(error => console.error(error));
+        });
+    });
+
+    // function to get the CSRF token from the cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Decode the cookie value and remove semicolon if present
+                const cookieName = cookie.substring(0, cookie.indexOf('='));
+                if (cookieName === name) {
+                    cookieValue = decodeURIComponent(cookie.substring(cookie.indexOf('=') + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
 {% endblock %}

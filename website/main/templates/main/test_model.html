@@ -1,0 +1,12 @@
+
+
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="model_input" placeholder="Enter test data">
+    <select name="model_type">
+        <option value="math">Math</option>
+        <option value="reading">Reading</option>
+        <option value="writing">Writing</option>
+    </select>
+    <button type="submit">Test Model</button>
+</form>

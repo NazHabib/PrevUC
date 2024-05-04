@@ -1,0 +1,31 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>Model Comparison</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Configuration ID</th>
+      <th>Model Type</th>
+      <th>Loss</th>
+      <th>MSE</th>
+      <th>MAE</th>
+      <th>RMSE</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for metric in metrics %}
+    <tr>
+      <td>{{ metric.configuration.id }}</td>
+      <td>{{ metric.model_type }}</td>
+      <td>{{ metric.loss }}</td>
+      <td>{{ metric.mse }}</td>
+      <td>{{ metric.mae }}</td>
+      <td>{{ metric.rmse }}</td>
+      <td>{{ metric.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

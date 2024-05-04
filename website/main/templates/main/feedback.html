@@ -1,0 +1,113 @@
+<!-- dashboard.html -->
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container">
+    <style>/* General styles for the dashboard */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light grey background for slight contrast */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    color: #333; /* Dark grey text for readability */
+}
+
+
+/* Table styling */
+.table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 12px;
+    border: 1px solid #dee2e6; /* Light grey border */
+    text-align: left;
+}
+
+.table th {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #f2f2f2; /* Zebra striping for rows */
+}
+
+/* Button styles */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Feedback message styling */
+.no-feedback {
+    text-align: center;
+    padding: 20px;
+    background-color: #ffc107; /* Warning color for no feedback */
+    color: #212529;
+    margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .table {
+        font-size: 14px; /* Smaller font size on smaller screens */
+    }
+
+    .btn-primary {
+        padding: 8px 16px; /* Smaller padding on smaller buttons */
+    }
+}
+</style>
+    <h1>Admin Dashboard</h1>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">Refresh Dashboard</a>
+    <!-- Dashboard widgets and analytics here -->
+
+    {% if feedback_list.exists %}
+    <h2>User Feedback</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Feedback</th>
+                <th>Date Submitted</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feedback in feedback_list %}
+            <tr>
+                <td>{{ feedback.user.username }}</td>
+                <td>{{ feedback.content }}</td>
+                <td>{{ feedback.created_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No feedback has been submitted yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No feedback has been submitted yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -63,7 +63,10 @@ ROOT_URLCONF = "website.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, 'main/templates'),  # Project-wide templates
+            os.path.join(BASE_DIR, 'dashboard/templates'),  # App-specific templates for dashboard
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
