@@ -77,18 +77,16 @@
     }
 }
 </style>
-    <h1>Admin Dashboard</h1>
-    <a href="{% url 'dashboard' %}" class="btn btn-primary">Refresh Dashboard</a>
-    <!-- Dashboard widgets and analytics here -->
+    <h1>Feedback dos utilizadores</h1>
+
 
     {% if feedback_list.exists %}
-    <h2>User Feedback</h2>
     <table class="table">
         <thead>
             <tr>
-                <th>User</th>
+                <th>Utilizador</th>
                 <th>Feedback</th>
-                <th>Date Submitted</th>
+                <th>Data de submissão</th>
             </tr>
         </thead>
         <tbody>
@@ -100,14 +98,15 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="3">No feedback has been submitted yet.</td>
+                <td colspan="3">Nenhum feedback foi submetido.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <p>No feedback has been submitted yet.</p>
+    <p>Nenhum feedback foi submetido até agora.</p>
     {% endif %}
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">Refresh Dashboard</a>
 </div>
 {% endblock %}
 

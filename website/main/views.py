@@ -3,15 +3,25 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from keras import Sequential, Input
+from keras.src.layers import Dense
+from keras.src.optimizers import Adam
 from keras.src.saving import load_model
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
-
-from .forms import PrevisionInputForm, ChangeForm, NotificationForm, ModelSelectionForm
+from typing import List, Tuple
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Input, Dense
+from tensorflow.keras.optimizers import Adam
+from sklearn.metrics import mean_squared_error
+from .forms import PrevisionInputForm, ChangeForm, NotificationForm, ModelSelectionForm, ModelConfigurationFormTesting
 from .forms import RegisterForm
 from .predictor import predict_scores
 from .forms import UserForm, ProfileForm
-from .models import Profile, Prevision, NewsletterSubscriber, ChangeLog, ModelMetrics
+from .models import Profile, Prevision, NewsletterSubscriber, ChangeLog, ModelMetrics, ModelConfigurationTesting, \
+    NeuronLayer
 from .decorators import role_required
 from .models import Notification
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -246,7 +256,7 @@ def convert_bool_string_to_numeric(df, boolean_fields):
     return df
 
 
-def guest_prevision(request):
+def guest_prevision_form(request):
     if request.method == 'POST':
         form = PrevisionForm(request.POST)
         if form.is_valid():
@@ -410,11 +420,11 @@ def add_feedback(request):
         form = FeedbackForm(request.POST)
         if form.is_valid():
             feedback = form.save(commit=False)
-            feedback.user = request.user  # Assuming you are capturing user in feedback
+            feedback.user = request.user
             feedback.save()
-            return redirect('home')  # Redirect after POST
+            return redirect('home')
     else:
-        form = FeedbackForm()  # Initialize an empty form
+        form = FeedbackForm()
 
     return render(request, 'main/add_feedback.html', {'form': form})
 
@@ -477,3 +487,141 @@ def model_metrics_list(request):
     return render(request, 'main/model_metrics_list.html', {'configurations': configurations})
 
 
+def train_model(model: Sequential, X_train: pd.DataFrame, y_train: pd.Series, epochs: int, batch_size: int, learning_rate: float) -> dict:
+    """Train the model"""
+    model.compile(optimizer=Adam(learning_rate=learning_rate), loss='mean_squared_error', metrics=['mae'])
+    history = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose=1)
+    return history
+
+
+def preprocess_data(file_path: str) -> pd.DataFrame:
+    """Preprocess the data"""
+    data = pd.read_csv(file_path)
+    data['gender'] = data['gender'].map({'male': 1, 'female': 0})
+    data['lunch'] = data['lunch'].map({'standard': 1, 'free/reduced': 0})
+    data['test preparation course'] = data['test preparation course'].map({'completed': 1, 'none': 0})
+    data = pd.get_dummies(data, columns=['race/ethnicity', 'parental level of education'])
+    return data
+
+def split_data(data: pd.DataFrame) -> Tuple[pd.DataFrame, List[pd.Series]]:
+    """Split the data into features and targets"""
+    feature_columns = data.columns.drop(['math score', 'reading score', 'writing score'])
+    X_target = data[feature_columns].astype('int32')
+    y_targets = [data['math score'].astype('int32'), data['reading score'].astype('int32'), data['writing score'].astype('int32')]
+    return X_target, y_targets
+
+def train_test_split_data(X_target: pd.DataFrame, y_targets: List[pd.Series]) -> Tuple[List[pd.DataFrame], List[pd.DataFrame], List[pd.Series], List[pd.Series]]:
+    """Split the data into training and testing sets"""
+    X_train, X_test, y_trains, y_tests = [], [], [], []
+    for i, y_target in enumerate(y_targets):
+        X_train_i, X_test_i, y_train_i, y_test_i = train_test_split(X_target, y_target, test_size=0.3, random_state=44 + i)
+        X_train.append(X_train_i)
+        X_test.append(X_test_i)
+        y_trains.append(y_train_i)
+        y_tests.append(y_test_i)
+    return X_train, X_test, y_trains, y_tests
+
+def build_model(neurons_per_layer: List[int], input_shape: int) -> Sequential:
+    """Build the neural network model"""
+    model = Sequential()
+    model.add(Input(shape=input_shape))
+    for num_neurons in neurons_per_layer:
+        model.add(Dense(num_neurons, activation='relu'))
+    model.add(Dense(1))
+    return model
+
+
+def evaluate_model(model, X_test, y_test):
+    """Evaluate the model"""
+    loss, mae = model.evaluate(X_test, y_test, verbose=0)
+    rmse_value = np.sqrt(loss)
+    y_test_pred = model.predict(X_test)
+    mse = np.mean((y_test_pred - y_test.to_numpy()) ** 2)
+    return loss, mae, rmse_value, mse
+
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from .forms import ModelConfigurationFormTesting
+from .models import ModelConfigurationTesting, NeuronLayer
+
+def train_and_evaluate_model(request):
+    if request.method == 'POST':
+        form = ModelConfigurationFormTesting(request.POST)
+        if form.is_valid():
+            # Preprocessing the data
+            file_path = 'main/StudentsPerformance.csv'
+            data = preprocess_data(file_path)
+            X_target, y_targets = split_data(data)
+            X_train, X_test, y_trains, y_tests = train_test_split_data(X_target, y_targets)
+
+            # Collecting form data
+            num_layers = form.cleaned_data['num_layers']
+            neurons_per_layer_str = form.cleaned_data['neurons_per_layer']
+            neurons_per_layer = [int(x) for x in neurons_per_layer_str.split(',')]
+            input_dim = (X_train[0].shape[1],)
+            model = build_model(neurons_per_layer, input_dim)
+            epochs = form.cleaned_data['epochs']
+            batch_size = form.cleaned_data['batch_size']
+            learning_rate = form.cleaned_data['learning_rate']
+
+            # Training the model
+            for i in range(len(X_train)):
+                train_data = X_train[i]
+                train_labels = y_trains[i]
+                history = train_model(model, train_data, train_labels, epochs, batch_size, learning_rate)
+
+            # Evaluating the model
+            loss_values, mae_values, rmse_values, mse_values = [], [], [], []
+            for i in range(len(X_test)):
+                loss, mae, rmse_value, mse = evaluate_model(model, X_test[i], y_tests[i])
+                loss_values.append(loss)
+                mae_values.append(mae)
+                rmse_values.append(rmse_value)
+                mse_values.append(mse)
+
+            # Saving results to the database
+            model_config = ModelConfigurationTesting(
+                num_layers=num_layers,
+                epochs=epochs,
+                learning_rate=learning_rate,
+                batch_size=batch_size,
+                loss=loss_values,
+                mae=mae_values,
+                rmse=rmse_values,
+                mse=mse_values
+            )
+            model_config.save()
+
+            # Saving neuron layers
+            for neurons in neurons_per_layer:
+                NeuronLayer(model_config=model_config, neurons=neurons).save()
+
+            response = {
+                'message': 'Model trained and evaluated successfully.',
+                'loss': loss_values,
+                'mae': mae_values,
+                'rmse': rmse_values,
+                'mse': mse_values
+            }
+            return JsonResponse(response)
+        else:
+            response = {'message': 'Form is not valid.'}
+            return JsonResponse(response, status=400)
+    else:
+        # Present the form for input
+        form = ModelConfigurationFormTesting()
+        return render(request, 'main/model_configuration_form.html', {'form': form})
+
+def model_results(request, pk):
+    # Retrieve the specific configuration using the primary key
+    config = get_object_or_404(ModelConfigurationTesting, pk=pk)
+
+    # Render the results page and pass the configuration object to the template
+    return render(request, 'main/model_results.html', {'config': config})
+
+
+def list_configurations(request):
+    # Fetch all configurations and their related neuron layers
+    configurations = ModelConfigurationTesting.objects.prefetch_related('neuronlayer_set').all()
+    return render(request, 'main/list_configurations.html', {'configurations': configurations})

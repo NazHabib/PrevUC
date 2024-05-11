@@ -2,11 +2,12 @@
 
 {% block content %}
 <div class="container">
-    <h1>Enter Prediction Data</h1>
+    <h1>Insira dados para previsão</h1>
+    <h2>Todo o dado enviada por aqui será visto por um data scientist e depois processada para o dataset. O dado entrgue poderá ou não ser aceite.</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
 </div>
 {% endblock %}

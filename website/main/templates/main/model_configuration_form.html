@@ -1,13 +1,13 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<h1>Edit Model Configuration</h1>
+<h1>Editar COnfiguração de Modelo</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Changes</button>
+    <button type="submit">Salvar mudanças</button>
 </form>
-<a href="{% url 'model_metrics_list' %}" class="btn">View Metrics</a>
+<a href="{% url 'model_metrics_list' %}" class="btn">Ver métricas</a>
 {% endblock %}
 
 

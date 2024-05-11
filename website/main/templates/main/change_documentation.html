@@ -1,9 +1,9 @@
 {% extends 'main/base.html' %}
 {% block content %}
-  <h2>Change Documentation</h2>
+  <h2>Documente as Mudanças feitas</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <button type="submit">Enviar</button>
   </form>
 {% endblock %}

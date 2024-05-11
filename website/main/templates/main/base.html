@@ -83,7 +83,7 @@ button {
     </div>
     <ul class="navbar-nav">
       {% if user.is_authenticated %}
-      <span class="navbar-text">Logged in as {{ user.username }} | </span>
+      <span class="navbar-text">Utilizador: {{ user.username }} </span>
       <li class="nav-item">
         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
       </li>
@@ -94,11 +94,11 @@ button {
     {% if request.resolver_match.url_name == 'base' and not user.is_authenticated %}
     <div class="my-4">
       <div class="welcome-sign">
-      Welcome to PrevUC!
+      Bem-vindo à PrevUC!
       </div>
       <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
-      <a href="{% url 'sign_up' %}" class="btn btn-secondary">Sign Up</a>
-      <a href="{% url 'guest_prevision' %}" class="btn btn-guest">Enter as Guest</a>
+      <a href="{% url 'sign_up' %}" class="btn btn-secondary">Crie uma conta</a>
+      <a href="{% url 'guest_prevision_form' %}" class="btn btn-guest">Entre como Guest</a>
     </div>
     {% endif %}
     {% block content %}{% endblock %}

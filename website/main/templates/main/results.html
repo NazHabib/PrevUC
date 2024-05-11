@@ -14,7 +14,7 @@
     {% else %}
         <p>You must be logged in to save previsions.</p>
         <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
-        <a href="{% url 'guest_prevision' %}" class="btn btn-primary">Outra previsão</a>
+        <a href="{% url 'guest_prevision_form' %}" class="btn btn-primary">Outra previsão</a>
     {% endif %}
 </div>
 {% endblock %}

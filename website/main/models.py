@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.core.validators import MaxValueValidator, MinValueValidator
+from jsonfield import ListField, JSONField
 
 
 class NewsletterSubscriber(models.Model):
@@ -144,3 +145,23 @@ class ModelMetrics(models.Model):
 
     def __str__(self):
         return f"Metrics for Configuration {self.configuration.id}"
+
+
+class NeuronLayer(models.Model):
+    model_config = models.ForeignKey('ModelConfigurationTesting', on_delete=models.CASCADE)
+    neurons = models.IntegerField()
+
+class ModelConfigurationTesting(models.Model):
+    num_layers = models.IntegerField(verbose_name='Number of Layers', default=1)
+    epochs = models.IntegerField(verbose_name='Epochs', default=10)
+    learning_rate = models.FloatField(verbose_name='Learning Rate', default=0.01)
+    batch_size = models.IntegerField(verbose_name='Batch Size', default=32)
+
+    # Storing results as JSON
+    loss = models.JSONField(blank=True, null=True, verbose_name='Loss')
+    mae = models.JSONField(blank=True, null=True, verbose_name='Mean Absolute Error')
+    rmse = models.JSONField(blank=True, null=True, verbose_name='Root Mean Squared Error')
+    mse = models.JSONField(blank=True, null=True, verbose_name='Mean Squared Error')
+
+    def __str__(self):
+        return f"Configuration #{self.pk} with {self.num_layers} layers"

@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+{% for config in configurations %}
+<li>
+    Configuration #{{ config.pk }} - <a href="{% url 'model_results' pk=config.pk %}">View Results</a>
+    <ul>
+        <li>Loss: {{ config.loss|json_script:"config-loss" }}</li>
+        <li>MAE: {{ config.mae|json_script:"config-mae" }}</li>
+        <li>RMSE: {{ config.rmse|json_script:"config-rmse" }}</li>
+        <li>MSE: {{ config.mse|json_script:"config-mse" }}</li>
+    </ul>
+</li>
+{% endfor %}
+
+{% endblock %}
+

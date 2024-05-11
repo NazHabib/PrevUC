@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.urls import path, include
 from . import views
+from django.contrib import admin
 
+# Corrected urlpatterns
 urlpatterns = [
     path('', views.base,name='base'),
     path('home', views.home, name='home'),
@@ -15,10 +17,8 @@ urlpatterns = [
     path('delete-prevision/<int:prevision_id>/', views.delete_prevision, name='delete_prevision'),
     path('saved-previsions/', views.saved_previsions, name='saved_previsions'),
     path('delete_account/', views.account_delete, name='account_delete'),
-    path('guest-main/', views.guest_prevision, name='guest_prevision'),
-    path('results/', views.prediction_results, name='prediction_results'),
+    path('guest-main/', views.guest_prevision_form, name='guest_prevision_form'),
     path('subscribe/', views.subscribe_newsletter, name='subscribe_newsletter'),
-    path('submit-prevision-form/', views.guest_prevision, name='guest_prevision'),
     path('edit_account/', views.edit_account, name='edit_account'),
     path('main-prevision/', views.main_prevision, name='main_prevision'),
     path('data-input/', views.data_input, name='data_input'),
@@ -34,7 +34,9 @@ urlpatterns = [
     path('model_configuration/', views.model_configuration_view, name='model_configuration'),
     path('model_configuration_list/', views.model_configuration_list_view, name='model_configuration_list'),
     path('configure/', views.model_configuration_view, name='configure_model'),
-    path('configure/<int:pk>/', views.model_configuration_view, name='edit_configuration'),
     path('metrics/', views.model_metrics_list, name='model_metrics_list'),
-    path('configure/<int:pk>/', views.model_configuration_view, name='edit_configuration'),
+    path('admin/', admin.site.urls),
+    path('configuratemodel/', views.train_and_evaluate_model, name='configure_model'),
+    path('results/<int:pk>/', views.model_results, name='model_results'),
+    path('configurations/', views.list_configurations, name='list_configurations'),
 ]

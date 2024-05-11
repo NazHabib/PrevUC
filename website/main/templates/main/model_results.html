@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Model Evaluation Results</h2>
+    <div>
+        <h3>Configuration Details:</h3>
+        <p>Number of Layers: {{ config.num_layers }}</p>
+        <p>Neurons per Layer: {{ config.neurons_per_layer }}</p>
+        <p>Epochs: {{ config.epochs }}</p>
+        <p>Learning Rate: {{ config.learning_rate }}</p>
+        <p>Batch Size: {{ config.batch_size }}</p>
+    </div>
+    <div>
+        <h3>Performance Metrics:</h3>
+        <p>Loss: {{ config.loss }}</p>
+        <p>MSE (Mean Squared Error): {{ config.mse }}</p>
+        <p>RMSE (Root Mean Squared Error): {{ config.rmse }}</p>
+        <p>MAE (Mean Absolute Error): {{ config.mae }}</p>
+    </div>
+    <a href="{% url 'configure_model' %}" class="btn btn-primary">Configure New Model</a>
+</div>
+{% endblock %}
+
