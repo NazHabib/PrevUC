@@ -7,7 +7,7 @@
         {% csrf_token %}
         <h2>Questionário para a previsão</h2>
         <h3>Este questionário dá a possibilidade de o utilizador escolher os parâmetros que irão afetar a previsão feita pelo modelo.</h3>
-        <form action="{% url 'guest_prevision_form' %}" method="POST">
+        <form action="{% url 'main_prevision' %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="gender" class="form-label">Género</label>

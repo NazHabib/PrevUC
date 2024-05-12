@@ -28,53 +28,7 @@
 
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Perfil
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="{% url 'profile' %}">Ver Perfil</a></li>
-            <li><a class="dropdown-item" href="{% url 'edit_account' %}">Editar Conta</a></li>
-            <li><a class="dropdown-item" href="{% url 'view_notifications' %}">Ver Notificações</a></li>
-          </ul>
-        </li>
-        {% if request.user.is_authenticated and request.user.profile.perfil == 'data scientist' %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="dataScientistDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Ferramentas do Data Scientist
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="dataScientistDropdown">
-            <li><a class="dropdown-item" href="{% url 'change_documentation' %}">Documentar as Mudanças</a></li>
-            <li><a class="dropdown-item" href="{% url 'create_notification' %}">Criar Notificações</a></li>
-            <li><a class="dropdown-item" href="{% url 'list_data_entries' %}">Pedidos de inserção de dados</a></li>
-            <li><a class="dropdown-item" href="{% url 'view_changes' %}">Ver Mudanças</a></li>
-            </ul>
-        </li>
-        <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="dataScientistDataModule" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Modelo Preditivo
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="dataScientistDropdown">
-            <li><a class="dropdown-item" href="{% url 'dashboard' %}">Ver Feedback dos Utilizadores</a></li>
-            <li><a class="dropdown-item" href="{% url 'model_performance' %}">Ver Métricas do Modelo</a></li>
-            <li><a class="dropdown-item" href="{% url 'model_configuration' %}">Criar Configuração do Modelo</a></li>
-            <li><a class="dropdown-item" href="{% url 'model_configuration_list' %}">Ver histórico de Configurações</a></li>
-            <li><a class="dropdown-item" href="{% url 'configure_model' %}" >Configure New Model</a></li>
-            <li><a href="{% url 'list_configurations' %}" class="dropdown-item">View Configurations</a></li>
-          </ul>
-          </li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
-</nav>
+
 {% load static %}
 
 <div class="container mt-3">

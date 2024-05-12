@@ -39,4 +39,8 @@ urlpatterns = [
     path('configuratemodel/', views.train_and_evaluate_model, name='configure_model'),
     path('results/<int:pk>/', views.model_results, name='model_results'),
     path('configurations/', views.list_configurations, name='list_configurations'),
+    path('login/', views.login_view, name='login'),
+    path('activate-account/<uidb64>/<token>/', views.send_activation_email, name='activate_account'),
+    path('account-activation-sent/', views.account_activation_sent, name='account_activation_sent'),
+    path('activate/<uidb64>/<token>/', views.activate_account, name='activate_account'),
 ]

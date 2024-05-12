@@ -1,9 +1,12 @@
 import keras
-from django.contrib.auth import login
+from django.db import transaction
+from django.contrib.auth import login, authenticate, get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
 from keras import Sequential, Input
+from django.utils.encoding import force_str
 from keras.src.layers import Dense
 from keras.src.optimizers import Adam
 from keras.src.saving import load_model
@@ -39,6 +42,11 @@ from .models import Feedback
 from .forms import FeedbackForm
 from .models import ModelConfiguration
 from .forms import ModelConfigurationForm
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator as token_generator, default_token_generator
 
 
 def calculate_metrics(model, X_train, y_train, X_test, y_test, loss_fn):
@@ -95,6 +103,22 @@ def delete_data(request, entry_id):
         return redirect('list_data_entries')
 
 
+def activate_account(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return HttpResponse('Your account has been activated successfully!')
+    else:
+        return HttpResponse('Activation link is invalid!')
+
+
+
 @login_required
 @require_POST
 def validate_data(request, entry_id):
@@ -130,6 +154,26 @@ def notify_users(change):
 def view_changes(request):
     changes = ChangeLog.objects.all()
     return render(request, 'main/feedback.html', {'changes': changes})
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if not user.is_active:
+                messages.error(request, 'This account is inactive. Please check your email to activate.')
+                return render(request, 'login.html', {'form': form})
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect('/home')
+            else:
+                messages.error(request, 'Invalid username or password.')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
 
 
 @login_required
@@ -212,21 +256,39 @@ def home(request):
     return render(request, 'main/home.html')
 
 
+def send_activation_email(user, request):
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    link = request.build_absolute_uri(reverse('activate_account', args=[uidb64, token]))
+
+    subject = 'Activate your account'
+    message = f'Hi {user.username}, please activate your account by clicking this link: {link}'
+    send_mail(subject, message, 'from@example.com', [user.email])
+
+
 def sign_up(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('/home')
+            with transaction.atomic():
+                user = form.save(commit=False)
+                user.is_active = False
+                user.save()
+                form.save_m2m()
+                send_activation_email(user, request)
+            return redirect('account_activation_sent')
+
     else:
         form = RegisterForm()
-
-    return render(request, 'registration/sign_up.html', {"form": form})
-
+    return render(request, 'registration/sign_up.html', {'form': form})
 
 def privacy_policy(request):
     return render(request, 'main/privacy_policy.html')
+
+def account_activation_sent(request):
+
+    return render(request, 'registration/account_activation_sent.html')
+
 
 
 def terms_of_service(request):
@@ -378,10 +440,10 @@ def delete_prevision(request, prevision_id):
 @login_required
 def saved_previsions(request):
     if request.method == 'POST':
-        if 'prediction_data' in request.session and 'prediction_result' in request.session:
-            prediction_data = request.session['prediction_data']
-            prediction_result = request.session['prediction_result']
+        prediction_data = request.session.get('prediction_data')
+        prediction_result = request.session.get('prediction_result')
 
+        if prediction_data and prediction_result:
             new_prevision = Prevision.objects.create(
                 user=request.user,
                 gender=prediction_data['gender'],
@@ -394,8 +456,13 @@ def saved_previsions(request):
                 writing_score=prediction_result.get('writing_score'),
             )
             print("New prediction saved:", new_prevision)
+            # Clear the session data after saving
             request.session.pop('prediction_data', None)
             request.session.pop('prediction_result', None)
+            return redirect('main_prevision')
+        else:
+            # Handle the case where the necessary data isn't in the session
+            messages.error(request, "Missing prediction data.")
             return redirect('main_prevision')
 
     previsions = Prevision.objects.filter(user=request.user)
@@ -625,3 +692,4 @@ def list_configurations(request):
     # Fetch all configurations and their related neuron layers
     configurations = ModelConfigurationTesting.objects.prefetch_related('neuronlayer_set').all()
     return render(request, 'main/list_configurations.html', {'configurations': configurations})
+

@@ -6,6 +6,14 @@ from .models import ChangeLog
 from .models import Notification
 from .models import ModelConfiguration
 from django.core.exceptions import ValidationError
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator as token_generator
+from django.urls import reverse
 
 
 class NotificationForm(forms.ModelForm):
@@ -17,6 +25,8 @@ class ChangeForm(forms.ModelForm):
         model = ChangeLog
         fields = ['name', 'description']
 
+
+
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
     perfil = forms.ChoiceField(choices=Profile.PERFIL_CHOICES, required=True)
@@ -25,14 +35,30 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ["username", "email", "password1", "password2"]
 
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("This email is already in use.")
+        return email
+
     def save(self, commit=True):
         user = super(RegisterForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
+        user.is_active = False  # User must be activated before they can log in
         if commit:
             user.save()
-            profile = Profile(user=user, perfil=self.cleaned_data['perfil'])
+            profile = Profile.objects.create(user=user, perfil=self.cleaned_data['perfil'])
             profile.save()
         return user
+
+def send_activation_email(user, request):
+    token_generator = PasswordResetTokenGenerator()
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = token_generator.make_token(user)
+    link = request.build_absolute_uri(reverse('activate_account', args=[uid, token]))
+    subject = 'Activate your account'
+    message = f'Hi {user.username}, please activate your account by clicking this link: {link}'
+    send_mail(subject, message, 'from@example.com', [user.email])
 
 class ProfileForm(forms.ModelForm):
     perfil = forms.ChoiceField(choices=Profile.PERFIL_CHOICES)

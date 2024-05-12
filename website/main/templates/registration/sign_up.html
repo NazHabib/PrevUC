@@ -2,6 +2,11 @@
 {% block title %}Login{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
+<style>
+    body {
+        color: white;
+    }
+</style>
 <form method="post">
     {% csrf_token %}{{form|crispy}}
     <p>Have an account? Login <a href="/login">Here</a></p>

@@ -24,7 +24,7 @@ class Profile(models.Model):
     perfil = models.CharField(max_length=15, choices=PERFIL_CHOICES)
 
     def __str__(self):
-        return f"{self.user.name}'s Profile"
+        return f"{self.user.username}'s Profile"
 
 
 class PredictionDataForm(models.Model):
