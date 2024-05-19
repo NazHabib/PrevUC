@@ -1,24 +1,70 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
+<style>
+    body {
+        background-color: #333; /* Adjust the background color as needed */
+    }
+    .container {
+        max-width: 600px; /* Set a max-width for form */
+        margin: auto; /* Center the form horizontally */
+        padding: 20px; /* Add some padding inside the form container */
+        background-color: #444; /* Dark background for form container */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow around the form */
+        color: #fff; /* White text color */
+    }
+    h2 {
+        text-align: center; /* Center align the header */
+        color: #ccc; /* Light gray text color for header */
+    }
+    .form-group {
+        margin-bottom: 20px; /* Space between form groups */
+    }
+    label {
+        display: block; /* Make labels block elements */
+        margin-bottom: 5px; /* Space between label and input */
+        color: #ccc; /* Light gray text color for labels */
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        width: 100%; /* Full width inputs */
+        padding: 10px; /* Padding inside inputs */
+        border: 1px solid #ccc; /* Light gray border */
+        border-radius: 4px; /* Rounded corners */
+        background-color: #555; /* Slightly lighter background for inputs */
+        color: #fff; /* White text color inside inputs */
+    }
+    .btn {
+        width: 100%; /* Full width button */
+        padding: 10px; /* Padding inside button */
+        background-color: #5cb85c; /* Green background for button */
+        color: white; /* White text color for button */
+        border: none; /* Remove border */
+        border-radius: 4px; /* Rounded corners */
+        cursor: pointer; /* Pointer cursor on hover */
+        font-size: 16px; /* Larger text for button */
+    }
+    .btn:hover {
+        background-color: #4cae4c; /* Slightly darker green on hover */
+    }
+</style>
 <div class="container">
-    <h2>Edit Profile</h2>
-
-
-    <div>
-        <h3>Current Information</h3>
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>Perfil:</strong> {{ user.profile.perfil }}</p>
-    </div>
-
-    <a href="{% url 'edit_account' %}">Edit Account Information</a>
-
-    <form method="post" action="{% url 'account_delete' %}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+    <h2>Editar informação da Conta</h2>
+    <form method="post" action="">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Delete Account</button>
-
+        <div class="form-group">
+            {{ user_form.username.label_tag }}
+            {{ user_form.username }}
+        </div>
+        <div class="form-group">
+            {{ user_form.email.label_tag }}
+            {{ user_form.email }}
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Mudanças</button>
     </form>
 </div>
 {% endblock %}
+
 

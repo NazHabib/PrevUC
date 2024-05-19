@@ -3,10 +3,60 @@
 {% block title %}Main Prevision Page - PrevUC{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-        {% csrf_token %}
-        <h2>Questionário para a previsão</h2>
+<style>
+    body {
+        background-color: #333;
+    }
+    .container_mt-5 {
+        max-width: 340px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #444;
+        border-radius: 8px;
+        margin: 50px auto 100px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #ccc;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #4cae4c;
+    }
+    .links a {
+        color: #88c;
+        text-decoration: none;
+    }
+    .links a:hover {
+        text-decoration: underline;
+    }
+    </style>
+<h2>Questionário para a previsão</h2>
         <h3>Este questionário dá a possibilidade de o utilizador escolher os parâmetros que irão afetar a previsão feita pelo modelo.</h3>
+
+<div class="container_mt-5">
+        {% csrf_token %}
         <form action="{% url 'main_prevision' %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">

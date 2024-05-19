@@ -142,18 +142,12 @@ def create_notification(request):
     return render(request, 'main/create_notification.html', {'form': form})
 
 
-def notify_users(change):
-    message = f"{change.user.username} updated the model '{change.name}' at {change.created_at.strftime('%Y-%m-%d %H:%M:%S')}: {change.description}"
-    notification = Notification.objects.create(message=message)
-    for user in User.objects.exclude(id=change.user.id):
-        notification.users_notified.add(user)
-    notification.save()
 
 
 @login_required
 def view_changes(request):
     changes = ChangeLog.objects.all()
-    return render(request, 'main/feedback.html', {'changes': changes})
+    return render(request, 'main/view_changes.html', {'changes': changes})
 
 
 def login_view(request):
@@ -184,8 +178,6 @@ def change_documentation(request):
             change = form.save(commit=False)
             change.user = request.user
             change.save()
-            # Notify other users
-            notify_users(change)
             return redirect('home')
     else:
         form = ChangeForm()

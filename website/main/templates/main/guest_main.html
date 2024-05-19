@@ -3,10 +3,60 @@
 {% block title %}Guest Main Page - PrevUC{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<style>
+    body {
+        background-color: #333;
+    }
+    .container_mt-5 {
+        max-width: 340px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #444;
+        border-radius: 8px;
+        margin: 50px auto 100px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #ccc;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #4cae4c;
+    }
+    .links a {
+        color: #88c;
+        text-decoration: none;
+    }
+    .links a:hover {
+        text-decoration: underline;
+    }
+</style>
+<h2>Questionário para a previsão</h2>
+<h3>Este questionário dá a possibilidade de o utilizador escolher os parâmetros que irão afetar a previsão feita pelo modelo.</h3>
+
+<div class="container_mt-5">
         {% csrf_token %}
-        <h2>Questionário para a previsão</h2>
-        <h3>Este questionário dá a possibilidade de o utilizador escolher os parâmetros que irão afetar a previsão feita pelo modelo.</h3>
         <form action="{% url 'guest_prevision_form' %}" method="POST">
             {% csrf_token %}
             <div class="mb-3">
@@ -18,7 +68,7 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="lunch" class="form-label">Lunch</label>
+                <label for="lunch" class="form-label">Almoço</label>
                 <h6>Este parâmetro refere-se ao tipo de almoço o aluno teve.</h6>
                 <select class="form-select" id="lunch" name="lunch">
                     <option value="True">Normal</option>
@@ -26,7 +76,7 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="testPreparationCourse" class="form-label">Curso de preparaão para os testes completos</label>
+                <label for="testPreparationCourse" class="form-label">Curso de preparação para os testes</label>
                 <h6>Este parâmetro representa se o aluno completou as preparações para os testes.</h6>
                 <select class="form-select" id="testPreparationCourse" name="test_preparation_course">
                     <option value="False">Nenhuma</option>

@@ -1,0 +1,101 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Change Log{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        width: 100%;
+        max-width: 1400px; /* Set a max-width for better control */
+        margin: 20px auto;
+        padding: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h3 {
+        text-align: center;
+        color: white;
+        background-color: #4CAF50;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 0; /* Remove margin */
+    }
+    .table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+        color: white;
+    }
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+    tr:nth-child(even) {
+        background-color: #333;
+    }
+    tr:nth-child(odd) {
+        background-color: #444;
+    }
+    tr:hover {
+        background-color: #555;
+    }
+    .btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+    }
+    .btn-success {
+        background-color: #4CAF50;
+    }
+    .btn-success:hover {
+        background-color: #45a049;
+    }
+    .btn-danger {
+        background-color: #f44336;
+    }
+    .btn-danger:hover {
+        background-color: #e31e10;
+    }
+</style>
+<div class="container">
+    <h3>Change Log</h3>
+    {% if changes %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Utilizador</th>
+                <th>Data de Criação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for change in changes %}
+            <tr>
+                <td>{{ change.name }}</td>
+                <td>{{ change.description }}</td>
+                <td>{{ change.user.username }}</td>
+                <td>{{ change.created_at|date:"F j, Y, g:i a" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Nenhuma mudança encontrada.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

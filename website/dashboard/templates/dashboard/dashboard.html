@@ -4,32 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Model Metrics</title>
-
 {% endblock %}
 
 {% block content %}
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: #282828;
+            color: #fff;
             margin: 0;
             padding: 0;
         }
         .container {
-            width: 90%;
-            margin: 0 auto;
-            padding: 20px;
+            width: 100%;
+            margin: 5px auto;
+            padding: 5px;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #111111;
         }
         table {
             width: 100%;
             margin: 20px 0;
             border-collapse: collapse;
-            background-color: #ffffff;
+            background-color: #444;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: #fff;
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #555;
             padding: 12px;
             text-align: center;
         }
@@ -38,10 +44,13 @@
             color: white;
         }
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #555;
+        }
+        tr:nth-child(odd) {
+            background-color: #444;
         }
         tr:hover {
-            background-color: #eaeaea;
+            background-color: #666;
         }
     </style>
     <div class="container">

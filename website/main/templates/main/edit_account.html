@@ -1,13 +1,81 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<div class="container">
-    <h2>Editar informção da Conta</h2>
+<style>
+body {
+    color: #fff;
+    font-family: Arial, sans-serif;
+    background-color: #282828; /* Ensures the entire body background is dark */
+}
+
+.edit-account-container {
+    width: 28%;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #222; /* Dark background for the form container */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.edit-account-container h2 {
+    text-align: center;
+    color: #ccc;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+    text-align: left;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #333;
+    color: #fff;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.btn:hover {
+    background-color: #4cae4c;
+}
+
+</style>
+    <h2>Editar informação da Conta</h2>
+<div class="edit-account-container">
+
     <form method="post" action="">
         {% csrf_token %}
-        {{ user_form.as_p }}
-        {{ profile_form.as_p }}
-        <button type="submit" class="btn btn-primary">Guardas Mudanças</button>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            {{ user_form.username }}
+        </div>
+        <div class="form-group">
+            <label for="email">Email address:</label>
+            {{ user_form.email }}
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Mudanças</button>
     </form>
 </div>
 {% endblock %}
+
+
