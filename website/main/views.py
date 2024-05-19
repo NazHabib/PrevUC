@@ -47,6 +47,7 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator as token_generator, default_token_generator
+import logging
 
 
 def calculate_metrics(model, X_train, y_train, X_test, y_test, loss_fn):
@@ -604,6 +605,8 @@ from django.http import JsonResponse
 from .forms import ModelConfigurationFormTesting
 from .models import ModelConfigurationTesting, NeuronLayer
 
+logger = logging.getLogger(__name__)
+
 def train_and_evaluate_model(request):
     if request.method == 'POST':
         form = ModelConfigurationFormTesting(request.POST)
@@ -617,7 +620,11 @@ def train_and_evaluate_model(request):
             # Collecting form data
             num_layers = form.cleaned_data['num_layers']
             neurons_per_layer_str = form.cleaned_data['neurons_per_layer']
-            neurons_per_layer = [int(x) for x in neurons_per_layer_str.split(',')]
+            try:
+                neurons_per_layer = [int(x) for x in neurons_per_layer_str.split(',')]
+            except ValueError as e:
+                logger.error("Error parsing neurons_per_layer: %s", e)
+                return JsonResponse({'message': 'Invalid neurons_per_layer format.'}, status=400)
             input_dim = (X_train[0].shape[1],)
             model = build_model(neurons_per_layer, input_dim)
             epochs = form.cleaned_data['epochs']
@@ -665,19 +672,46 @@ def train_and_evaluate_model(request):
             }
             return JsonResponse(response)
         else:
-            response = {'message': 'Form is not valid.'}
+            response = {'message': 'Form is not valid.', 'errors': form.errors}
             return JsonResponse(response, status=400)
     else:
         # Present the form for input
         form = ModelConfigurationFormTesting()
         return render(request, 'main/model_configuration_form.html', {'form': form})
 
+
 def model_results(request, pk):
     # Retrieve the specific configuration using the primary key
     config = get_object_or_404(ModelConfigurationTesting, pk=pk)
 
-    # Render the results page and pass the configuration object to the template
-    return render(request, 'main/model_results.html', {'config': config})
+    # Separate metrics for different models
+    math_metrics = {
+        'mse': config.mse[0],
+        'rmse': config.rmse[0],
+        'mae': config.mae[0]
+    }
+    reading_metrics = {
+        'mse': config.mse[1],
+        'rmse': config.rmse[1],
+        'mae': config.mae[1]
+    }
+    writing_metrics = {
+        'mse': config.mse[2],
+        'rmse': config.rmse[2],
+        'mae': config.mae[2]
+    }
+
+    # Retrieve neurons per layer
+    neurons_per_layer = config.neuronlayer_set.values_list('neurons', flat=True)
+
+    # Render the results page and pass the configuration object and separated metrics to the template
+    return render(request, 'main/model_results.html', {
+        'config': config,
+        'neurons_per_layer': neurons_per_layer,
+        'math_metrics': math_metrics,
+        'reading_metrics': reading_metrics,
+        'writing_metrics': writing_metrics
+    })
 
 
 def list_configurations(request):

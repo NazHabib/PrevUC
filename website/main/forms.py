@@ -138,7 +138,7 @@ class FeedbackForm(forms.ModelForm):
 class ModelConfigurationForm(forms.ModelForm):
     class Meta:
         model = ModelConfiguration
-        fields = ['num_layers', 'neurons_per_layer', 'epochs', 'learning_rate', 'batch_size', 'rating']
+        fields = ['num_layers', 'neurons_per_layer', 'epochs', 'learning_rate', 'batch_size']
 
 class ModelSelectionForm(forms.Form):
     model_type = forms.ChoiceField(choices=[

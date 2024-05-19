@@ -1,15 +1,108 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<h1>Editar COnfiguração de Modelo</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salvar mudanças</button>
-</form>
-<a href="{% url 'model_metrics_list' %}" class="btn">Ver métricas</a>
+<style>
+    body {
+        background-color: #f4f4f9; /* Light background color for the whole page */
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .form-container {
+        width: 35%;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        color: #333;
+        text-align: left;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    label {
+        color: #333;
+    }
+    input[type="text"],
+    textarea,
+    input[type="number"],
+    input[type="email"],
+    input[type="password"],
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+    }
+    input::placeholder,
+    textarea::placeholder {
+        color: #aaa;
+    }
+    .btn {
+        width: 50%;
+        padding: 10px;
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        text-align: center;
+        align-self: center; /* Center the button */
+    }
+    textarea {
+        resize: none;
+    }
+    .btn:hover {
+        background-color: #4cae4c;
+    }
+    .link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #333;
+        text-decoration: none;
+    }
+    .link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="form-container">
+    <h1>Editar Configuração de Modelo</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="id_num_layers">Num de layers:</label>
+            <input type="number" id="id_num_layers" name="num_layers" value="{{ form.num_layers.value }}" required>
+        </div>
+        <div>
+            <label for="id_neurons_per_layer">Neurôneos por layer:</label>
+            <input type="text" id="id_neurons_per_layer" name="neurons_per_layer" value="{{ form.neurons_per_layer.value }}" required>
+        </div>
+        <div>
+            <label for="id_epochs">Epochs:</label>
+            <input type="number" id="id_epochs" name="epochs" value="{{ form.epochs.value }}" required>
+        </div>
+        <div>
+            <label for="id_learning_rate">Learning rate:</label>
+            <input type="number" step="0.01" id="id_learning_rate" name="learning_rate" value="{{ form.learning_rate.value }}" required>
+        </div>
+        <div>
+            <label for="id_batch_size">Batch size:</label>
+            <input type="number" id="id_batch_size" name="batch_size" value="{{ form.batch_size.value }}" required>
+        </div>
+        <button type="submit" class="btn">Salvar mudanças</button>
+    </form>
+</div>
 {% endblock %}
-
-
-
-

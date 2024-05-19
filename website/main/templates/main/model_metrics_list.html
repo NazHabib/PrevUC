@@ -1,15 +1,13 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<h1>Configurations and Metrics</h1>
-<a href="{% url 'main/configure_model' %}" class="btn">Add New Configuration</a>
+<h1>Configurações e métricas</h1>
+<a href="{% url 'configure_model' %}" class="btn">Adicione uma nova configuração</a>
 <table>
     <thead>
         <tr>
             <th>ID</th>
-            <th>Details</th>
-            <th>Rating</th>
-            <th>Actions</th>
+            <th>Detalhes</th>
         </tr>
     </thead>
     <tbody>
@@ -18,14 +16,10 @@
             <td>{{ config.id }}</td>
             <td>
                 Layers: {{ config.num_layers }}<br>
-                Neurons per Layer: {{ config.neurons_per_layer }}<br>
+                Neurônios por Layer: {{ config.neurons_per_layer }}<br>
                 Epochs: {{ config.epochs }}<br>
                 Learning Rate: {{ config.learning_rate }}<br>
                 Batch Size: {{ config.batch_size }}
-            </td>
-            <td>{{ config.rating }}</td>
-            <td>
-                <a href="{% url 'edit_configuration' config.id %}" class="edit-btn">Edit</a>
             </td>
         </tr>
         {% endfor %}
@@ -36,13 +30,14 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
-    color: #333;
+    color: #ffffff;
 }
 table {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
-    color: white;  /* Ensuring text is white */
+    color: white;
+    margin-bottom: 20px;
 }
 th, td {
     border: 1px solid #ddd;  /* Lighter border for better visibility */

@@ -128,12 +128,10 @@ class ModelConfiguration(models.Model):
     epochs = models.IntegerField(default=10)
     learning_rate = models.FloatField(default=0.01)
     batch_size = models.IntegerField(default=16)
-    rating = models.IntegerField(default=0, blank=True, null=True)  # Rating field added
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"Configuration {self.id} - Rating: {self.rating or 'Not rated'}"
+
 
 class ModelMetrics(models.Model):
     configuration = models.ForeignKey(ModelConfiguration, on_delete=models.CASCADE)
