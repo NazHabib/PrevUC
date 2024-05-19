@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
+from django.db import transaction
+
 from .models import Profile, PredictionDataForm, Feedback, ModelConfigurationTesting
 from .models import ChangeLog
 from .models import Notification
@@ -38,13 +40,12 @@ class RegisterForm(UserCreationForm):
         return email
 
     def save(self, commit=True):
-        user = super(RegisterForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.is_active = False  # User must be activated before they can log in
-        if commit:
+        with transaction.atomic():
+            user = super(RegisterForm, self).save(commit=False)
+            user.email = self.cleaned_data['email']
+            user.is_active = False
             user.save()
-            profile = Profile.objects.create(user=user, perfil=self.cleaned_data['perfil'])
-            profile.save()
+            Profile.objects.create(user=user, perfil=self.cleaned_data['perfil'])
         return user
 
 def send_activation_email(user, request):
