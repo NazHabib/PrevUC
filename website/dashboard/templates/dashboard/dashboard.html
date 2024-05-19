@@ -1,113 +1,103 @@
 {% extends 'main/base.html' %}
 
+{% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Metrics</title>
+
+{% endblock %}
+
 {% block content %}
-  <h1>Model Metrics</h1>
-  <style>
-  body {
-    font-family: Arial, sans-serif; /* Sets the default font for the page */
-  }
-
-  table {
-    width: 80%; /* Sets the width of the table */
-    margin: 20px auto; /* Centers the table horizontally and adds some space above and below */
-    border-collapse: collapse; /* Removes gaps between cells */
-    background-color: #f2f2f2; /* Light grey background for the table */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow to make the table pop out */
-  }
-
-  th, td {
-    border: 1px solid #ddd; /* Adds a light grey border around table cells */
-    padding: 8px; /* Adds padding inside cells for better readability */
-    text-align: center; /* Centers text in cells */
-    color: #000; /* Sets text color to black */
-  }
-
-  th {
-    background-color: #4CAF50; /* Dark green background for headers */
-    color: white; /* White text for headers */
-  }
-
-  tr:nth-child(even){background-color: #f9f9f9} /* Zebra striping for rows */
-
-  tr:hover {background-color: #ddd;} /* Highlight on mouse over */
-  </style>
-  <table>
-    <thead>
-      <tr>
-        <th>Model</th>
-        <th>Metric</th>
-        <th>Train</th>
-        <th>Test</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Math Metrics -->
-      <tr>
-        <td rowspan="4">Math</td>
-        <td>Loss</td>
-        <td>{{ math_metrics.loss_train }}</td>
-        <td>{{ math_metrics.loss_test }}</td>
-      </tr>
-      <tr>
-        <td>MSE</td>
-        <td>{{ math_metrics.mse_train }}</td>
-        <td>{{ math_metrics.mse_test }}</td>
-      </tr>
-      <tr>
-        <td>MAE</td>
-        <td>{{ math_metrics.mae_train }}</td>
-        <td>{{ math_metrics.mae_test }}</td>
-      </tr>
-      <tr>
-        <td>RMSE</td>
-        <td>{{ math_metrics.rmse_train }}</td>
-        <td>{{ math_metrics.rmse_test }}</td>
-      </tr>
-      <!-- Reading Metrics -->
-      <tr>
-        <td rowspan="4">Reading</td>
-        <td>Loss</td>
-        <td>{{ reading_metrics.loss_train }}</td>
-        <td>{{ reading_metrics.loss_test }}</td>
-      </tr>
-      <tr>
-        <td>MSE</td>
-        <td>{{ reading_metrics.mse_train }}</td>
-        <td>{{ reading_metrics.mse_test }}</td>
-      </tr>
-      <tr>
-        <td>MAE</td>
-        <td>{{ reading_metrics.mae_train }}</td>
-        <td>{{ reading_metrics.mae_test }}</td>
-      </tr>
-      <tr>
-        <td>RMSE</td>
-        <td>{{ reading_metrics.rmse_train }}</td>
-        <td>{{ reading_metrics.rmse_test }}</td>
-      </tr>
-      <!-- Writing Metrics -->
-      <tr>
-        <td rowspan="4">Writing</td>
-        <td>Loss</td>
-        <td>{{ writing_metrics.loss_train }}</td>
-        <td>{{ writing_metrics.loss_test }}</td>
-      </tr>
-      <tr>
-        <td>MSE</td>
-        <td>{{ writing_metrics.mse_train }}</td>
-        <td>{{ writing_metrics.mse_test }}</td>
-      </tr>
-      <tr>
-        <td>MAE</td>
-        <td>{{ writing_metrics.mae_train }}</td>
-        <td>{{ writing_metrics.mae_test }}</td>
-      </tr>
-      <tr>
-        <td>RMSE</td>
-        <td>{{ writing_metrics.rmse_train }}</td>
-        <td>{{ writing_metrics.rmse_test }}</td>
-      </tr>
-    </tbody>
-  </table>
-
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #eaeaea;
+        }
+    </style>
+    <div class="container">
+        <h1>Model Metrics</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Metric</th>
+                    <th>Test</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Math Metrics -->
+                <tr>
+                    <td rowspan="3">Math</td>
+                    <td>MSE</td>
+                    <td>{{ math_metrics.mse_test }}</td>
+                </tr>
+                <tr>
+                    <td>MAE</td>
+                    <td>{{ math_metrics.mae_test }}</td>
+                </tr>
+                <tr>
+                    <td>RMSE</td>
+                    <td>{{ math_metrics.rmse_test }}</td>
+                </tr>
+                <!-- Reading Metrics -->
+                <tr>
+                    <td rowspan="3">Reading</td>
+                    <td>MSE</td>
+                    <td>{{ reading_metrics.mse_test }}</td>
+                </tr>
+                <tr>
+                    <td>MAE</td>
+                    <td>{{ reading_metrics.mae_test }}</td>
+                </tr>
+                <tr>
+                    <td>RMSE</td>
+                    <td>{{ reading_metrics.rmse_test }}</td>
+                </tr>
+                <!-- Writing Metrics -->
+                <tr>
+                    <td rowspan="3">Writing</td>
+                    <td>MSE</td>
+                    <td>{{ writing_metrics.mse_test }}</td>
+                </tr>
+                <tr>
+                    <td>MAE</td>
+                    <td>{{ writing_metrics.mae_test }}</td>
+                </tr>
+                <tr>
+                    <td>RMSE</td>
+                    <td>{{ writing_metrics.rmse_test }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

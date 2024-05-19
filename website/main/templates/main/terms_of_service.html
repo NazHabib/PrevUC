@@ -3,26 +3,60 @@
 {% block title %}Termos de Serviço{% endblock %}
 
 {% block content %}
-<h2>Termos de Serviço do Sistema PrevUC</h2>
-<h3>1 - Aceitação dos Termos</h3>
-<p>Ao utilizar o sistema PrevUC, concordaem cumprir com os termos de serviço, todas as leis e regulamentos aplicáveis, e concorda que é responsável pelo cumprimento de todas as leis locais aplicáveis. Se não concorda com algum destes termos, está proibido de usar este site.</p>
-<h3>2 - Licença de Uso</h3>
-<p>É concedida a permissão de uso temporário de uma cópia de materiais(informação e software) no sistema PrevUC para visualização pessoal e não comercial apenas. Esta é a concessão de uma lincença, não uma transferência de título, e sob este lincença não pode:</p>
-<p>-modificar ou copiar materiais;</p>
-<p>-usar os materiais para qualquer finalidade comercial ou para exibição pública;</p>
-<p>-tentar descompilar ou fazer "reverse engineering" de qualquer software contido no sistema PrevUC;</p>
-<p>-remover quaisquer direitos autorais ou outras notações da propriedade dos materiais;</p>
-<p>-transferir os materiais para outra pessoa ou "espelhar" os materiais em outro espaço.</p>
-<p>Esta licença será automaticamente rescindida se violar alguma destas restrições e poderá ser rescindida pelo sistema PrevUC a qualquer momento. Ao terminar sua visualização destes materiais ou após o término desta licença, deverá apagar todos os materiais baixados em sua posse, seja em formato eletrônico ou impresso.</p>
-<h3>3 - Isenção de Responsabilidade</h3>
-<p>Os materiais no sistema PrevUC são fornecidos como estão. O sistema PrevUC não oferece garantias, expressas ou implícitas, e, por este meio, isenta e nega todas as outras garantias, incluindo, sem limitação, garantias implícitas ou condições de comercialização, adequação a um fim específico ou não violação de propriedade intelectual ou outra violação de direitos.</p>
-<p>Além disso, o sistema PrevUC não garante ou faz qualquer representação relativa à precisão, resultados prováveis ou confiabilidade do uso dos materiais no seu site ou de outra forma relacionado a tais materiais ou em sites vinculados a este site.</p>
-<h3>4 - Limitações</h3>
-<p>Em nenhum caso o sistema PrevUC ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro, ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar os materiais no sistema PrevUC, mesmo que o sistema PrevUC ou um representante autorizado do sistema PrevUC tenha sido notificado oralmente ou por escrito da possibilidade de tais danos.</p>
-<h3>5 - Precisão dos Materiais</h3>
-<p>Os materiais exibidos no sistema PrevUC podem incluir erros técnicos, tipográficos ou fotográficos. O sistema PrevUC não garante que qualquer material em seu site seja preciso, completo ou atual. O sistema PrevUC pode fazer alterações nos materiais contidos no site a qualquer momento, sem aviso prévio. No entanto, o sistema PrevUC não se compromete a atualizar os materiais.</p>
-<h3>6 - Links</h3>
-<p>O sistema PrevUC não analisou todos os sites vinculados ao site e não é responsável pelo conteúdo de nenhum site vinculado. A inclusão de qualquer link não implica endosso pelo sistema PrevUC do site. O uso de qualquer site vinculado é por conta e risco do usuário.</p>
-<h3>7 - Modificações</h3>
-<p>O sistema PrevUC pode fazer a revisão destes Termos de Serviço para o site a qualquer momento, sem aviso prévio. Ao usar este site, concorda em ficar vinculado à versão atual desses Termos de Serviço.</p>
+<style>
+    body {
+        color: #fff;
+        font-family: Arial, sans-serif;
+        background-color: #282828;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+    }
+    .terms {
+        width: 80%;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #222;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    .title {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 24px;
+        color: #ccc;
+    }
+    p, h3 {
+        text-align: left;
+        margin-left: 20px;
+        color: #ccc;
+    }
+    h3 {
+        margin-top: 20px;
+    }
+</style>
+<div class="terms">
+    <h2 class="title">Termos de Serviço do Sistema PrevUC</h2>
+    <h3>1 - Aceitação dos Termos</h3>
+    <p>Ao utilizar o sistema PrevUC, concorda em cumprir com os termos de serviço, todas as leis e regulamentos aplicáveis, e concorda que é responsável pelo cumprimento de todas as leis locais aplicáveis. Se não concorda com algum destes termos, está proibido de usar este site.</p>
+    <h3>2 - Licença de Uso</h3>
+    <p>É concedida a permissão de uso temporário de uma cópia dos materiais (informação e software) no sistema PrevUC para visualização pessoal e não comercial apenas. Esta é a concessão de uma licença, não uma transferência de título, e sob esta licença não pode:</p>
+    <p>Modificar ou copiar os materiais;</p>
+    <p>Usar os materiais para qualquer finalidade comercial, ou para exibição pública (comercial ou não);</p>
+    <p>Tentar descompilar ou fazer engenharia reversa de qualquer software contido no sistema PrevUC;</p>
+    <p>Remover quaisquer direitos autorais ou outras notações de propriedade dos materiais;</p>
+    <p>Transferir os materiais para outra pessoa ou "espelhar" os materiais em outro servidor.</p>
+    <p>Esta licença será automaticamente rescindida se você violar alguma destas restrições e poderá ser rescindida pelo sistema PrevUC a qualquer momento. Após o término da visualização destes materiais ou após o término desta licença, você deve apagar todos os materiais baixados em sua posse, seja em formato eletrônico ou impresso.</p>
+    <h3>3 - Isenção de Responsabilidade</h3>
+    <p>Os materiais no sistema PrevUC são fornecidos 'como estão'. O sistema PrevUC não oferece garantias, expressas ou implícitas, e por este meio nega todas as outras garantias, incluindo, sem limitação, garantias implícitas ou condições de comercialização, adequação a um fim específico, ou não violação de propriedade intelectual ou outra violação de direitos.</p>
+    <h3>4 - Limitações</h3>
+    <p>Em nenhum caso o sistema PrevUC ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro, ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar os materiais no sistema PrevUC, mesmo que o sistema PrevUC ou um representante autorizado deste tenha sido notificado oralmente ou por escrito da possibilidade de tais danos.</p>
+    <h3>5 - Precisão dos Materiais</h3>
+    <p>Os materiais exibidos no sistema PrevUC podem incluir erros técnicos, tipográficos ou fotográficos. O sistema PrevUC não garante que qualquer dos materiais em seu site seja preciso, completo ouHere's the continuation and completion of the HTML for the "Termos de Serviço" (Terms of Service) page: atual, e o sistema PrevUC pode fazer alterações nos materiais contidos no seu site a qualquer momento, sem aviso prévio. No entanto, o sistema PrevUC não se compromete a atualizar os materiais.</p>
+    <h3>6 - Links</h3>
+    <p>O sistema PrevUC não analisou todos os sites vinculados ao seu site e não é responsável pelo conteúdo de nenhum site vinculado. A inclusão de qualquer link não implica endosso pelo sistema PrevUC do site. O uso de qualquer site vinculado é por conta e risco do usuário.</p>
+    <h3>7 - Modificações</h3>
+    <p>O sistema PrevUC pode revisar estes Termos de Serviço para o seu site a qualquer momento, sem aviso prévio. Ao usar este site, você concorda em ficar vinculado à versão atual destes Termos de Serviço.</p>
+</div>
 {% endblock %}
+

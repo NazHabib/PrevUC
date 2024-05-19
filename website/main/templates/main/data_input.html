@@ -1,15 +1,143 @@
 {% extends 'main/base.html' %}
 
+{% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inserir Dados para Previsão</title>
+
+{% endblock %}
+
 {% block content %}
+<style>
+    body {
+        color: #fff;
+        font-family: Arial, sans-serif;
+        background-color: #282828;
+    }
+    .config-container {
+        width: 50%;  /* Adjusted width to match the title size */
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #222;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    h1 {
+        text-align: center;
+        color: #ccc;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .form-group {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+    label {
+        margin-bottom: 5px;
+        color: #ccc;
+    }
+    input[type="number"],
+    input[type="text"],
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #333;
+        color: #fff;
+    }
+    input[type="number"] {
+        min: 0;  /* Only positive numbers allowed */
+    }
+    .btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    .btn:hover {
+        background-color: #4cae4c;
+    }
+    .link {
+        margin-top: 20px;
+        color: #88c;
+        text-decoration: none;
+    }
+    .link:hover {
+        text-decoration: underline;
+    }
+</style>
+    <h1>Inserir Dados para Previsão</h1>
+    <h2>Todos os dados submetidos aqui serão revisados por um cientista de dados e processados no conjunto de dados. Os dados submetidos podem ou não ser aceitos.</h2>
+
 <div class="container">
-    <h1>Insira dados para previsão</h1>
-    <h2>Todo o dado enviada por aqui será visto por um data scientist e depois processada para o dataset. O dado entrgue poderá ou não ser aceite.</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Enviar</button>
+        <div class="form-group">
+            <label for="gender">Gênero</label>
+            <select id="gender" name="gender">
+                <option value="Male">Masculino</option>
+                <option value="Female">Feminino</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="lunch">Almoço</label>
+            <select id="lunch" name="lunch">
+                <option value="Standard">Padrão</option>
+                <option value="Free/Reduced">Grátis/Reduzido</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="test_preparation_course">Curso de Preparação para Teste</label>
+            <select id="test_preparation_course" name="test_preparation_course">
+                <option value="None">Nenhum</option>
+                <option value="Completed">Concluído</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="race_ethnicity">Raça/Etnia</label>
+            <select id="race_ethnicity" name="race_ethnicity">
+                <option value="Group A">Grupo A</option>
+                <option value="Group B">Grupo B</option>
+                <option value="Group C">Grupo C</option>
+                <option value="Group D">Grupo D</option>
+                <option value="Group E">Grupo E</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="parental_level_of_education">Nível de Educação dos Pais</label>
+            <select id="parental_level_of_education" name="parental_level_of_education">
+                <option value="High School">Ensino Médio</option>
+                <option value="Some College">Alguma Faculdade</option>
+                <option value="Some High School">Algum Ensino Médio</option>
+                <option value="Bachelor's Degree">Bacharelado</option>
+                <option value="Master's Degree">Mestrado</option>
+                <option value="Associate's Degree">Grau de Associado</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="math_score">Nota de Matemática</label>
+            <input type="number" id="math_score" name="math_score" min="1" max="100">
+        </div>
+        <div class="form-group">
+            <label for="reading_score">Nota de Leitura</label>
+            <input type="number" id="reading_score" name="reading_score" min="1" max="100">
+        </div>
+        <div class="form-group">
+            <label for="writing_score">Nota de Escrita</label>
+            <input type="number" id="writing_score" name="writing_score" min="1" max="100">
+        </div>
+        <div class="btn-container">
+            <button type="submit" class="btn">Enviar</button>
+        </div>
     </form>
 </div>
 {% endblock %}
-
-

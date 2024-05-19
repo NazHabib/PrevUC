@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.contrib.auth.tokens import default_token_generator as token_generator
+from django.contrib.auth.tokens import default_token_generator as token_generator, PasswordResetTokenGenerator
 from django.urls import reverse
 
 

@@ -198,7 +198,7 @@ def view_notifications(request):
     return render(request, 'main/notifications.html', {'notifications': notifications})
 
 
-@role_required('professor')
+
 def data_input(request):
     if request.method == 'POST':
         form = PrevisionInputForm(request.POST)

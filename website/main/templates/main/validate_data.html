@@ -1,21 +1,93 @@
 {% extends 'main/base.html' %}
 
+{% block head %}
+
+{% endblock %}
+
 {% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        width: 100%;
+        max-width: 1400px; /* Set a max-width for better control */
+        margin: 20px auto;
+        padding: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+    h3 {
+        text-align: center;
+        color: white;
+        background-color: #4CAF50;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 0; /* Remove margin */
+    }
+    .table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+        color: black;
+    }
+    th {
+        background-color: #4CAF50;
+        color: black;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    tr:nth-child(odd) {
+        background-color: #f9f9f9;
+    }
+    tr:hover {
+        background-color: #eaeaea;
+    }
+    .btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+    }
+    .btn-success {
+        background-color: #4CAF50;
+    }
+    .btn-success:hover {
+        background-color: #45a049;
+    }
+    .btn-danger {
+        background-color: #f44336;
+    }
+    .btn-danger:hover {
+        background-color: #e31e10;
+    }
+</style>
 <div class="container">
     {% if data_entries %}
-    <h3>Data Entries</h3>
+    <h3>Entradas de Dados</h3>
     <table class="table">
         <thead>
             <tr>
-                <th>Gender</th>
-                <th>Lunch</th>
-                <th>Test Preparation Course</th>
-                <th>Race/Ethnicity</th>
-                <th>Parental Level of Education</th>
-                <th>Math Score</th>
-                <th>Reading Score</th>
-                <th>Writing Score</th>
-                <th>Actions</th>
+                <th>Gênero</th>
+                <th>Almoço</th>
+                <th>Curso de Preparação para Teste</th>
+                <th>Raça/Etnia</th>
+                <th>Nível de Educação dos Pais</th>
+                <th>Nota de Matemática</th>
+                <th>Nota de Leitura</th>
+                <th>Nota de Escrita</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -34,13 +106,13 @@
                     <form action="{% url 'validate_data' entry.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
                         <input type="hidden" name="data_entry_id" value="{{ entry.id }}" />
-                        <button type="submit" class="btn btn-success" name="action" value="validate">Validate</button>
+                        <button type="submit" class="btn btn-success" name="action" value="validate">Validar</button>
                     </form>
                     <!-- Form for deletion -->
                     <form action="{% url 'delete_data' entry.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
                         <input type="hidden" name="data_entry_id" value="{{ entry.id }}" />
-                        <button type="submit" class="btn btn-danger" name="action" value="delete">Delete</button>
+                        <button type="submit" class="btn btn-danger" name="action" value="delete">Excluir</button>
                     </form>
                 </td>
             </tr>
@@ -48,7 +120,8 @@
         </tbody>
     </table>
     {% else %}
-    <p>No data entries found. Please submit some data.</p>
+    <p>Nenhuma entrada de dados encontrada. Por favor, envie alguns dados.</p>
     {% endif %}
 </div>
 {% endblock %}
+
