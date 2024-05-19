@@ -6,15 +6,11 @@ from .models import ChangeLog
 from .models import Notification
 from .models import ModelConfiguration
 from django.core.exceptions import ValidationError
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.contrib.auth.tokens import default_token_generator as token_generator, PasswordResetTokenGenerator
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.urls import reverse
-
+from django.core.mail import send_mail
 
 class NotificationForm(forms.ModelForm):
     class Meta:
@@ -59,6 +55,7 @@ def send_activation_email(user, request):
     subject = 'Activate your account'
     message = f'Hi {user.username}, please activate your account by clicking this link: {link}'
     send_mail(subject, message, 'from@example.com', [user.email])
+
 
 class ProfileForm(forms.ModelForm):
     perfil = forms.ChoiceField(choices=Profile.PERFIL_CHOICES)

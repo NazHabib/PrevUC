@@ -1,9 +1,11 @@
 import keras
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.template.loader import render_to_string
 from django.urls import reverse
 from keras import Sequential, Input
 from django.utils.encoding import force_str
@@ -42,12 +44,12 @@ from .models import Feedback
 from .forms import FeedbackForm
 from .models import ModelConfiguration
 from .forms import ModelConfigurationForm
-from django.core.mail import send_mail
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator as token_generator, default_token_generator
 import logging
+from django.core.mail import send_mail
 
 
 def calculate_metrics(model, X_train, y_train, X_test, y_test, loss_fn):
@@ -104,20 +106,6 @@ def delete_data(request, entry_id):
         return redirect('list_data_entries')
 
 
-def activate_account(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = get_user_model().objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-        user = None
-
-    if user is not None and default_token_generator.check_token(user, token):
-        user.is_active = True
-        user.save()
-        return HttpResponse('Your account has been activated successfully!')
-    else:
-        return HttpResponse('Activation link is invalid!')
-
 
 
 @login_required
@@ -169,6 +157,7 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
+
 
 
 @login_required
@@ -250,6 +239,12 @@ def home(request):
 
 
 def send_activation_email(user, request):
+    from django.utils.http import urlsafe_base64_encode
+    from django.utils.encoding import force_bytes
+    from django.contrib.auth.tokens import default_token_generator
+    from django.core.mail import send_mail
+    from django.urls import reverse
+
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
     link = request.build_absolute_uri(reverse('activate_account', args=[uidb64, token]))
@@ -263,25 +258,38 @@ def sign_up(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            with transaction.atomic():
-                user = form.save(commit=False)
-                user.is_active = False
-                user.save()
-                form.save_m2m()
-                send_activation_email(user, request)
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            form.save_m2m()
+            send_activation_email(user, request)
             return redirect('account_activation_sent')
-
     else:
         form = RegisterForm()
+
     return render(request, 'registration/sign_up.html', {'form': form})
+
+def account_activation_sent(request):
+    return render(request, 'registration/account_activation_sent.html')
+
+
+def activate_account(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))  # Updated to use force_str
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return HttpResponse('Your account has been activated successfully!')
+    else:
+        return HttpResponse('Activation link is invalid!')
+
 
 def privacy_policy(request):
     return render(request, 'main/privacy_policy.html')
-
-def account_activation_sent(request):
-
-    return render(request, 'registration/account_activation_sent.html')
-
 
 
 def terms_of_service(request):
