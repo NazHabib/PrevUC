@@ -16,7 +16,7 @@
     }
     .config-container {
         width: 50%;  /* Adjusted width to match the title size */
-        margin: 40px auto;
+        margin: 10px auto;
         padding: 20px;
         background-color: #222;
         border-radius: 8px;
@@ -54,7 +54,7 @@
         min: 0;  /* Only positive numbers allowed */
     }
     .btn {
-        width: 100%;
+        width: 100px;
         padding: 10px;
         background-color: #5cb85c;
         color: white;
@@ -75,10 +75,10 @@
         text-decoration: underline;
     }
 </style>
-    <h1>Inserir Dados para Previsão</h1>
-    <h2>Todos os dados submetidos aqui serão revisados por um cientista de dados e processados no conjunto de dados. Os dados submetidos podem ou não ser aceitos.</h2>
+    <h4>Inserir Dados para Previsão</h4>
+    <h5>Todos os dados submetidos aqui serão revisados por um cientista de dados e processados no conjunto de dados. Os dados submetidos podem ou não ser aceitos.</h5>
 
-<div class="container">
+<div class="config-container">
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
@@ -136,7 +136,7 @@
             <input type="number" id="writing_score" name="writing_score" min="1" max="100">
         </div>
         <div class="btn-container">
-            <button type="submit" class="btn">Enviar</button>
+            <button type="submit" class="btn">Submeter</button>
         </div>
     </form>
 </div>

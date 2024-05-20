@@ -26,7 +26,7 @@ from .forms import RegisterForm
 from .predictor import predict_scores
 from .forms import UserForm, ProfileForm
 from .models import Profile, Prevision, NewsletterSubscriber, ChangeLog, ModelMetrics, ModelConfigurationTesting, \
-    NeuronLayer
+    NeuronLayer, ModelParameters
 from .decorators import role_required
 from .models import Notification
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -250,7 +250,7 @@ def send_activation_email(user, request):
     link = request.build_absolute_uri(reverse('activate_account', args=[uidb64, token]))
 
     subject = 'Activate your account'
-    message = f'Hi {user.username}, please activate your account by clicking this link: {link}'
+    message = f'Olá {user.username}, ative a conta clicando no link: {link}'
     send_mail(subject, message, 'from@example.com', [user.email])
 
 
@@ -275,7 +275,7 @@ def account_activation_sent(request):
 
 def activate_account(request, uidb64, token):
     try:
-        uid = force_str(urlsafe_base64_decode(uidb64))  # Updated to use force_str
+        uid = force_str(urlsafe_base64_decode(uidb64))
         user = get_user_model().objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
         user = None
@@ -283,7 +283,7 @@ def activate_account(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return HttpResponse('Your account has been activated successfully!')
+        return redirect('login')
     else:
         return HttpResponse('Activation link is invalid!')
 
@@ -479,8 +479,8 @@ def subscribe_newsletter(request):
                 success_message = "Subscription successful!"
             else:
                 success_message = "You are already subscribed!"
-            return HttpResponseRedirect(reverse('base'))
-    return HttpResponseRedirect(reverse('base'))
+            return HttpResponseRedirect(reverse('home'))
+    return HttpResponseRedirect(reverse('home'))
 
 
 def add_feedback(request):
@@ -678,12 +678,12 @@ def train_and_evaluate_model(request):
                 'rmse': rmse_values,
                 'mse': mse_values
             }
-            return JsonResponse(response)
+            return HttpResponseRedirect(reverse('model_results', kwargs={'pk': model_config.pk}))
         else:
-            response = {'message': 'Form is not valid.', 'errors': form.errors}
-            return JsonResponse(response, status=400)
+            # Handle form errors
+            return JsonResponse({'message': 'Form is not valid.', 'errors': form.errors}, status=400)
     else:
-        # Present the form for input
+        # Present the form for input if GET request
         form = ModelConfigurationFormTesting()
         return render(request, 'main/model_configuration_form.html', {'form': form})
 
@@ -694,19 +694,19 @@ def model_results(request, pk):
 
     # Separate metrics for different models
     math_metrics = {
-        'mse': config.mse[0],
-        'rmse': config.rmse[0],
-        'mae': config.mae[0]
+        'mse': format(config.mse[0], ".2f"),
+        'rmse': format(config.rmse[0], ".2f"),
+        'mae': format(config.mae[0], ".2f")
     }
     reading_metrics = {
-        'mse': config.mse[1],
-        'rmse': config.rmse[1],
-        'mae': config.mae[1]
+        'mse': format(config.mse[1], ".2f"),
+        'rmse': format(config.rmse[1], ".2f"),
+        'mae': format(config.mae[1], ".2f")
     }
     writing_metrics = {
-        'mse': config.mse[2],
-        'rmse': config.rmse[2],
-        'mae': config.mae[2]
+        'mse': format(config.mse[2], ".2f"),
+        'rmse': format(config.rmse[2], ".2f"),
+        'mae': format(config.mae[2], ".2f")
     }
 
     # Retrieve neurons per layer
@@ -726,4 +726,9 @@ def list_configurations(request):
     # Fetch all configurations and their related neuron layers
     configurations = ModelConfigurationTesting.objects.prefetch_related('neuronlayer_set').all()
     return render(request, 'main/list_configurations.html', {'configurations': configurations})
+
+
+def model_parameters_list(request):
+    parameters = ModelParameters.objects.all()
+    return render(request, 'main/model_parameters_list.html', {'parameters': parameters})
 

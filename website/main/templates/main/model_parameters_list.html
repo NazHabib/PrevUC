@@ -1,0 +1,37 @@
+{% extends 'main/base.html' %}
+
+
+<head>
+    <title>Model Parameters</title>
+</head>
+{% block content %}
+<body>
+    <h1>Model Parameters List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Arquitetura</th>
+                <th>Learning Rate</th>
+                <th>Loss</th>
+                <th>Epochs</th>
+                <th>Batch Size</th>
+                <th>Validation Split</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for parameter in parameters %}
+            <tr>
+                <td>{{ parameter.name }}</td>
+                <td>{{ parameter.architecture }}</td>
+                <td>{{ parameter.learning_rate }}</td>
+                <td>{{ parameter.loss }}</td>
+                <td>{{ parameter.epochs }}</td>
+                <td>{{ parameter.batch_size }}</td>
+                <td>{{ parameter.validation_split }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+{% endblock %}

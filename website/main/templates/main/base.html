@@ -114,7 +114,7 @@ button {
             Ferramentas do Data Scientist
           </a>
           <ul class="dropdown-menu" aria-labelledby="dataScientistDropdown">
-            <li><a class="dropdown-item" href="{% url 'change_documentation' %}">Documentar as Mudanças</a></li>
+            <li><a class="dropdown-item" href="{% url 'change_documentation' %}">Documentar Mudanças</a></li>
             <li><a class="dropdown-item" href="{% url 'create_notification' %}">Criar Notificações</a></li>
             <li><a class="dropdown-item" href="{% url 'list_data_entries' %}">Pedidos de inserção de dados</a></li>
             <li><a class="dropdown-item" href="{% url 'view_changes' %}">Ver Mudanças</a></li>
@@ -126,11 +126,10 @@ button {
               Modelo Preditivo
             </a>
             <ul class="dropdown-menu" aria-labelledby="dataScientistDropdown">
-              <li><a class="dropdown-item" href="{% url 'model_performance' %}">Ver Métricas do Modelo</a></li>
-              <li><a class="dropdown-item" href="{% url 'model_configuration' %}">Criar Configuração do Modelo</a></li>
-              <li><a class="dropdown-item" href="{% url 'model_configuration_list' %}">Ver histórico de Configurações</a></li>
-              <li><a class="dropdown-item" href="{% url 'configure_model' %}" >Configure Um Modelo</a></li>
-              <li><a href="{% url 'list_configurations' %}" class="dropdown-item">Ver Configurations</a></li>
+              <li><a class="dropdown-item" href="{% url 'model_parameters_list' %}">Parâmetros do Modelo</a></li>
+              <li><a class="dropdown-item" href="{% url 'model_performance' %}">Analisar modelo atual</a></li>
+              <li><a class="dropdown-item" href="{% url 'configure_model' %}" >Teste um modelo</a></li>
+              <li><a href="{% url 'list_configurations' %}" class="dropdown-item">Ver configurações</a></li>
             </ul>
           </li>
         {% endif %}

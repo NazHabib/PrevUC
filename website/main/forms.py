@@ -72,7 +72,7 @@ class UserProfileForm(forms.ModelForm):
         fields = ['perfil']
 
 
-# For editing User model fields
+
 class UserForm(forms.ModelForm):
     class Meta:
         model = User

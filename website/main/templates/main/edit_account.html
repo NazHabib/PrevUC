@@ -66,11 +66,11 @@ body {
     <form method="post" action="">
         {% csrf_token %}
         <div class="form-group">
-            <label for="username">Username:</label>
+            <label for="username">Nome de Utilizador:</label>
             {{ user_form.username }}
         </div>
         <div class="form-group">
-            <label for="email">Email address:</label>
+            <label for="email">Email:</label>
             {{ user_form.email }}
         </div>
         <button type="submit" class="btn btn-primary">Guardar Mudanças</button>

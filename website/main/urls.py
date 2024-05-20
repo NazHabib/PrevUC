@@ -41,5 +41,6 @@ urlpatterns = [
     path('configurations/', views.list_configurations, name='list_configurations'),
     path('activate/<uidb64>/<token>/', views.activate_account, name='activate_account'),
     path('account-activation-sent/', views.account_activation_sent, name='account_activation_sent'),
+    path('model-parameters/', views.model_parameters_list, name='model_parameters_list'),
 
 ]

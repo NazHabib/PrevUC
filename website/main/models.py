@@ -163,3 +163,16 @@ class ModelConfigurationTesting(models.Model):
 
     def __str__(self):
         return f"Configuration #{self.pk} with {self.num_layers} layers"
+
+
+class ModelParameters(models.Model):
+    name = models.CharField(max_length=100)
+    architecture = models.JSONField()
+    learning_rate = models.FloatField()
+    loss = models.CharField(max_length=100)
+    epochs = models.IntegerField()
+    batch_size = models.IntegerField()
+    validation_split = models.FloatField()
+
+    def __str__(self):
+        return self.name

@@ -1,9 +1,21 @@
+import os
+import sys
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.optimizers import Adam
 
+# Ensure the script directory is in the Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Set the Django settings module
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'website.website.settings')
+import django
+django.setup()
+
+# Import the model from the main app
+from .models import ModelParameters
 
 file_path = 'StudentsPerformance.csv'
 data = pd.read_csv(file_path)
@@ -37,18 +49,53 @@ def build_model(architecture, input_shape):
     model.add(Dense(1))
     return model
 
+# Math model
 model = build_model(math_architecture, X_train.shape[1])
 model.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error', metrics=['mae'])
 history = model.fit(X_train, y_train, epochs=79, batch_size=11, validation_split=0.2, verbose=0)
+model.save('model_math.keras')
 
+# Save math model parameters
+ModelParameters.objects.create(
+    name='Math Model',
+    architecture=math_architecture,
+    learning_rate=0.01,
+    loss='mean_squared_error',
+    epochs=79,
+    batch_size=11,
+    validation_split=0.2
+)
+
+# Reading model
 model2 = build_model(reading_architecture, X_train2.shape[1])
 model2.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error', metrics=['mae'])
 history2 = model2.fit(X_train2, y_train2, epochs=30, batch_size=41, validation_split=0.2, verbose=0)
+model2.save('model_reading.keras')
 
+# Save reading model parameters
+ModelParameters.objects.create(
+    name='Reading Model',
+    architecture=reading_architecture,
+    learning_rate=0.01,
+    loss='mean_squared_error',
+    epochs=30,
+    batch_size=41,
+    validation_split=0.2
+)
+
+# Writing model
 model3 = build_model(writing_architecture, X_train3.shape[1])
 model3.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error', metrics=['mae'])
 history3 = model3.fit(X_train3, y_train3, epochs=59, batch_size=30, validation_split=0.2, verbose=0)
-
-model.save('model_math.keras')
-model2.save('model_reading.keras')
 model3.save('model_writing.keras')
+
+# Save writing model parameters
+ModelParameters.objects.create(
+    name='Writing Model',
+    architecture=writing_architecture,
+    learning_rate=0.01,
+    loss='mean_squared_error',
+    epochs=59,
+    batch_size=30,
+    validation_split=0.2
+)
