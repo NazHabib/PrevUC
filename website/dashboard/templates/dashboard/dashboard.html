@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block head %}
     <meta charset="UTF-8">
@@ -21,6 +22,7 @@
             padding: 5px;
             background-color: #fff;
             border-radius: 8px;
+            color: #111111;
         }
         h1 {
             text-align: center;
@@ -52,61 +54,92 @@
         tr:hover {
             background-color: #666;
         }
+        .metrics {
+            margin-bottom: 20px;
+        }
+        .metrics img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
     <div class="container">
-        <h1>Model Metrics</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Model</th>
-                    <th>Metric</th>
-                    <th>Test</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Math Metrics -->
-                <tr>
-                    <td rowspan="3">Math</td>
-                    <td>MSE</td>
-                    <td>{{ math_metrics.mse_test }}</td>
-                </tr>
-                <tr>
-                    <td>MAE</td>
-                    <td>{{ math_metrics.mae_test }}</td>
-                </tr>
-                <tr>
-                    <td>RMSE</td>
-                    <td>{{ math_metrics.rmse_test }}</td>
-                </tr>
-                <!-- Reading Metrics -->
-                <tr>
-                    <td rowspan="3">Reading</td>
-                    <td>MSE</td>
-                    <td>{{ reading_metrics.mse_test }}</td>
-                </tr>
-                <tr>
-                    <td>MAE</td>
-                    <td>{{ reading_metrics.mae_test }}</td>
-                </tr>
-                <tr>
-                    <td>RMSE</td>
-                    <td>{{ reading_metrics.rmse_test }}</td>
-                </tr>
-                <!-- Writing Metrics -->
-                <tr>
-                    <td rowspan="3">Writing</td>
-                    <td>MSE</td>
-                    <td>{{ writing_metrics.mse_test }}</td>
-                </tr>
-                <tr>
-                    <td>MAE</td>
-                    <td>{{ writing_metrics.mae_test }}</td>
-                </tr>
-                <tr>
-                    <td>RMSE</td>
-                    <td>{{ writing_metrics.rmse_test }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <h1>Métricas dos modelos</h1>
+        <div class="metrics">
+            <h2>Modelo de previsão da nota de matemática</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MSE</td>
+                        <td>{{ math_metrics.mse_test }}</td>
+                    </tr>
+                    <tr>
+                        <td>MAE</td>
+                        <td>{{ math_metrics.mae_test }}</td>
+                    </tr>
+                    <tr>
+                        <td>RMSE</td>
+                        <td>{{ math_metrics.rmse_test }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="metrics">
+            <h2>Modelo de previsão da nota de leitura</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MSE</td>
+                        <td>{{ reading_metrics.mse_test }}</td>
+                    </tr>
+                    <tr>
+                        <td>MAE</td>
+                        <td>{{ reading_metrics.mae_test }}</td>
+                    </tr>
+                    <tr>
+                        <td>RMSE</td>
+                        <td>{{ reading_metrics.rmse_test }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="metrics">
+            <h2>Modelo de previsão da nota de escrita</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MSE</td>
+                        <td>{{ writing_metrics.mse_test }}</td>
+                    </tr>
+                    <tr>
+                        <td>MAE</td>
+                        <td>{{ writing_metrics.mae_test }}</td>
+                    </tr>
+                    <tr>
+                        <td>RMSE</td>
+                        <td>{{ writing_metrics.rmse_test }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}

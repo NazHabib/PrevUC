@@ -16,7 +16,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ DEBUG = True
 # SECURITY WARNING: don't run with debug turned on in production!
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -44,11 +42,11 @@ INSTALLED_APPS = [
     "django_otp.plugins.otp_static",
     "two_factor",
     "jsonfield",
-    "main.apps.MainConfig",
     "crispy_forms",
     "crispy_bootstrap5",
     "django_extensions",
     "sslserver",
+    "main.apps.MainConfig",
     "dashboard.apps.DashboardConfig",
 ]
 
@@ -64,11 +62,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
 ]
 
 ROOT_URLCONF = "website.urls"
 
-X_FRAME_OPTIONS = 'DENY'
+USE_I18N = True
+USE_L10N = True
 
 TEMPLATES = [
     {
@@ -91,7 +91,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "website.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -113,7 +112,8 @@ CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-
+X_FRAME_OPTIONS = 'DENY'
+SECURE_BROWSER_XSS_FILTER = True
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -136,12 +136,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+IGNORED_PATTERNS = [
+    'venv/*',
+    'staticfiles/*',
+    '*.txt',
+    'node_modules/*',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'pt-pt'
 
 TIME_ZONE = "UTC"
 
@@ -149,29 +154,19 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-# Static files (CSS, JavaScript, Images)
-# This is the base URL to use when referring to static files in templates or views
 STATIC_URL = '/static/'
 
 # This is the absolute path to the directory where 'collectstatic' will collect static files for deployment
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-
-
-
 
 # Add the STATICFILES_DIRS setting if it's not already present
 # Additional locations of static files
 STATICFILES_DIRS = [
     BASE_DIR / 'main' / 'static',  # Adjust the path according to your project structure
 ]
-
-
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -180,8 +175,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = "/home"
 LOGOUT_REDIRECT_URL = "/login"
-
-
 
 load_dotenv()  # Load environment variables from .env file
 

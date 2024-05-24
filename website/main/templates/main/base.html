@@ -13,13 +13,49 @@
   <title>PrevUC</title>
   {% load static %}
   <style>
+
+
+.naz2 h5 {
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.naz2 p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+.naz {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Adjust the spacing between elements */
+}
+
+.naz .form-control {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.naz .form-control {
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    border: 1px lightgoldenrodyellow;
+    width: 100%; /* Make sure the button spans the container width */
+    max-width: 320px; /* Ensure it doesn't exceed a certain width */
+}
+
     .navbar-brand { font-weight: bold; color: #fff; }
     .btn-guest { background-color: #198754; }
     footer .row div { min-height: 150px; }
-    .newsletter-signup { padding-left: 2rem; }
+    .naz2 { padding-left: 2rem; }
     @media (max-width: 768px) {
       footer .row div { min-height: auto; }
-      .newsletter-signup { padding-left: 0; }
+      .naz2 { padding-left: 0; }
     }
 
 
@@ -126,8 +162,8 @@ button {
               Modelo Preditivo
             </a>
             <ul class="dropdown-menu" aria-labelledby="dataScientistDropdown">
-              <li><a class="dropdown-item" href="{% url 'model_parameters_list' %}">Parâmetros do Modelo</a></li>
-              <li><a class="dropdown-item" href="{% url 'model_performance' %}">Analisar modelo atual</a></li>
+              <li><a class="dropdown-item" href="{% url 'model_parameters_list' %}">Parâmetros do Modelo atual </a></li>
+              <li><a class="dropdown-item" href="{% url 'model_performance' %}">Performance do modelo atual</a></li>
               <li><a class="dropdown-item" href="{% url 'configure_model' %}" >Teste um modelo</a></li>
               <li><a href="{% url 'list_configurations' %}" class="dropdown-item">Ver configurações</a></li>
             </ul>
@@ -183,19 +219,17 @@ button {
           </ul>
         </div>
 
-        <div class="col-lg-4 col-md-12 mb-4 mb-md-0 newsletter-signup">
-          <h5 class="text-uppercase">Notícias</h5>
-          <p>Fique atualizado com notícias e atualizações, inscrevendo-se ao newsletter.</p>
-          <form method="post" action="{% url 'subscribe_newsletter' %}">
-            {% csrf_token %}
-            <div class="container mt-5">
-        <form method="post" action="#">
-            <div class="form-outline form-white mb-4 subscribe-container">
-                <input type="email" name="email" id="form5Example2" class="form-control" placeholder="Email address" />
-                <button type="submit" class="btn btn-primary btn-block">Subscribe</button>
-            </div>
-        </form>
-    </div>
+        <div class="col-lg-4 col-md-12 mb-4 mb-md-0 naz2">
+    <h5 class="text-uppercase">Notícias</h5>
+    <p>Fique atualizado com notícias e atualizações, inscrevendo-se ao newsletter.</p>
+    <form method="post" action="{% url 'subscribe_newsletter' %}">
+        {% csrf_token %}
+        <div class="form-outline form-white mb-4 naz">
+            <input type="email" name="email" id="form5Example2" class="form-control" placeholder="Email" />
+            <button type="submit" class="btn btn-primary btn-block">Subscribe</button>
+        </div>
+    </form>
+</div>
           </form>
           {% if success_message %}
           <div class="alert alert-success" role="alert">

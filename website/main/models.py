@@ -155,7 +155,7 @@ class ModelConfigurationTesting(models.Model):
     learning_rate = models.FloatField(verbose_name='Learning Rate', default=0.01)
     batch_size = models.IntegerField(verbose_name='Batch Size', default=32)
 
-    # Storing results as JSON
+
     loss = models.JSONField(blank=True, null=True, verbose_name='Loss')
     mae = models.JSONField(blank=True, null=True, verbose_name='Mean Absolute Error')
     rmse = models.JSONField(blank=True, null=True, verbose_name='Root Mean Squared Error')
@@ -166,7 +166,7 @@ class ModelConfigurationTesting(models.Model):
 
 
 class ModelParameters(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default='atual')
     architecture = models.JSONField()
     learning_rate = models.FloatField()
     loss = models.CharField(max_length=100)

@@ -22,6 +22,9 @@
         text-align: center;
         color: #333;
     }
+    h6 {
+        text-align:left;
+    }
     form {
         display: flex;
         flex-direction: column;
@@ -66,20 +69,11 @@
     .btn:hover {
         background-color: #4cae4c;
     }
-    .link {
-        display: block;
-        text-align: center;
-        margin-top: 20px;
-        color: #333;
-        text-decoration: none;
-    }
-    .link:hover {
-        text-decoration: underline;
-    }
 </style>
 
 <div class="form-container">
-    <h1>Editar Configuração de Modelo</h1>
+    <h1>Testar Modelo</h1>
+    <h6>Nesta página pode testar um modelo e ver as suas métricas de performance</h6>
     <form method="post">
         {% csrf_token %}
         <div>
@@ -102,7 +96,7 @@
             <label for="id_batch_size">Batch size:</label>
             <input type="number" id="id_batch_size" name="batch_size" value="{{ form.batch_size.value }}" required>
         </div>
-        <button type="submit" class="btn">Salvar mudanças</button>
+        <button type="submit" class="btn">Testar Modelo</button>
     </form>
 </div>
 {% endblock %}

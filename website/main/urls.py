@@ -35,12 +35,11 @@ urlpatterns = [
     path('model_configuration_list/', views.model_configuration_list_view, name='model_configuration_list'),
     path('configure/', views.model_configuration_view, name='configure_model'),
     path('metrics/', views.model_metrics_list, name='model_metrics_list'),
-    path('admin/', admin.site.urls),
     path('configuratemodel/', views.train_and_evaluate_model, name='configure_model'),
     path('results/<int:pk>/', views.model_results, name='model_results'),
     path('configurations/', views.list_configurations, name='list_configurations'),
     path('activate/<uidb64>/<token>/', views.activate_account, name='activate_account'),
     path('account-activation-sent/', views.account_activation_sent, name='account_activation_sent'),
     path('model-parameters/', views.model_parameters_list, name='model_parameters_list'),
-
+    path('update_model/<int:pk>/', views.update_model, name='update_model'),
 ]

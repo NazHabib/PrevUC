@@ -35,30 +35,78 @@
 
 
     </style>
-    <h2>Saved Predictions</h2>
+    <h2>Previsões guardadas</h2>
     {% if previsions %}
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Gender</th>
-                    <th>Lunch</th>
-                    <th>Test Preparation Course</th>
-                    <th>Race/Ethnicity</th>
-                    <th>Parental Level of Education</th>
-                    <th>Math Score</th>
-                    <th>Reading Score</th>
-                    <th>Writing Score</th>
-                    <th>Action</th>
+                    <th>Género</th>
+                    <th>Tipo de almoço</th>
+                    <th>Preparação para teste</th>
+                    <th>Etnia</th>
+                    <th>Educação dos pais</th>
+                    <th>Nota a matemática</th>
+                    <th>Nota a leitura</th>
+                    <th>Nota de escrita</th>
+                    <th>Ação</th>
                 </tr>
             </thead>
             <tbody>
                 {% for prevision in previsions %}
                     <tr>
-                        <td>{{ prevision.gender }}</td>
-                        <td>{{ prevision.lunch }}</td>
-                        <td>{{ prevision.test_preparation_course }}</td>
-                        <td>{{ prevision.race_ethnicity }}</td>
-                        <td>{{ prevision.parental_level_of_education }}</td>
+                        <td>
+                            {% if prevision.gender %}
+                                Homem
+                            {% else %}
+                                Mulher
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if prevision.lunch %}
+                                Normal
+                            {% else %}
+                                Grátis/Reduzido
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if prevision.test_preparation_course %}
+                                Completo
+                            {% else %}
+                                Nenhuma
+                            {% endif %}
+                        </td>
+                            <td>
+                {% if prevision.race_ethnicity == 'group A' %}
+                    Grupo A
+                {% elif prevision.race_ethnicity == 'group B' %}
+                    Grupo B
+                {% elif prevision.race_ethnicity == 'group C' %}
+                    Grupo C
+                {% elif prevision.race_ethnicity == 'group D' %}
+                    Grupo D
+                {% elif prevision.race_ethnicity == 'group E' %}
+                    Grupo E
+                {% else %}
+                    Desconhecido
+                {% endif %}
+            </td>
+            <td>
+                {% if prevision.parental_level_of_education == 'high school' %}
+                    Secundário
+                {% elif prevision.parental_level_of_education == 'some college' %}
+                    Alguma Faculdade
+                {% elif prevision.parental_level_of_education == 'bachelor\'s degree' %}
+                    Licenciatura
+                {% elif prevision.parental_level_of_education == 'some high school' %}
+                    Algum secundário
+                {% elif prevision.parental_level_of_education == 'master\'s degree' %}
+                    Mestrado
+                {% elif prevision.parental_level_of_education == 'associate\'s degree' %}
+                    Grau de Associado
+                {% else %}
+                    Desconhecido
+                {% endif %}
+            </td>
                         <td>{{ prevision.math_score }}</td>
                         <td>{{ prevision.reading_score }}</td>
                         <td>{{ prevision.writing_score }}</td>

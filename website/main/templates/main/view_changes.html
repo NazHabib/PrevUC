@@ -10,7 +10,7 @@
         margin: 0;
         padding: 0;
     }
-    .container {
+    .container_xd {
         width: 100%;
         max-width: 1400px; /* Set a max-width for better control */
         margin: 20px auto;
@@ -27,7 +27,6 @@
     }
     .table {
         width: 100%;
-        margin: 20px 0;
         border-collapse: collapse;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
@@ -70,7 +69,7 @@
         background-color: #e31e10;
     }
 </style>
-<div class="container">
+<div class="container_xd">
     <h3>Change Log</h3>
     {% if changes %}
     <table class="table">
@@ -98,4 +97,3 @@
     {% endif %}
 </div>
 {% endblock %}
-

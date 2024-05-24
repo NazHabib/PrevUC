@@ -15,7 +15,7 @@ class ProfileInline(admin.StackedInline):
 
 
 
-admin.site.unregister(User)
+
 
 
 def get_inline_instances(self, request, obj=None):
@@ -33,5 +33,4 @@ admin.site.register(Notification)
 admin.site.register(Feedback)
 admin.site.register(ModelConfiguration)
 admin.site.register(ModelMetrics)
-
 

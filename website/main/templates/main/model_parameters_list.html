@@ -1,37 +1,116 @@
 {% extends 'main/base.html' %}
 
-
 <head>
     <title>Model Parameters</title>
 </head>
 {% block content %}
+<style>
+.model-params-title {
+    text-align: center;
+    color: #333;
+}
+
+.model-params-container {
+    background-color: whitesmoke;
+    margin: 20px 0;
+    padding: 20px;
+}
+
+.model-params-table {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.model-params-thead {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.model-params-th,
+.model-params-td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.model-params-th {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.model-params-td {
+    font-size: 14px;
+    color: #555;
+}
+
+.model-params-tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+    .model-params-table {
+        width: 100%;
+    }
+
+    .model-params-th,
+    .model-params-td {
+        padding: 8px;
+    }
+
+    .model-params-th {
+        font-size: 14px;
+    }
+
+    .model-params-td {
+        font-size: 12px;
+    }
+}
+
+.model-performance-link {
+    text-align: center;
+    margin: 20px 0;
+}
+</style>
+
 <body>
-    <h1>Model Parameters List</h1>
-    <table>
-        <thead>
+<div class="model-params-container">
+    <h1 class="model-params-title">Lista de Parametros do modelo preditivo atual</h1>
+    <table class="model-params-table">
+        <thead class="model-params-thead">
             <tr>
-                <th>Nome</th>
-                <th>Arquitetura</th>
-                <th>Learning Rate</th>
-                <th>Loss</th>
-                <th>Epochs</th>
-                <th>Batch Size</th>
-                <th>Validation Split</th>
+                <th class="model-params-th">Nome</th>
+                <th class="model-params-th">Arquitetura</th>
+                <th class="model-params-th">Learning Rate</th>
+                <th class="model-params-th">Loss</th>
+                <th class="model-params-th">Epochs</th>
+                <th class="model-params-th">Batch Size</th>
+                <th class="model-params-th">Validation Split</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="model-params-tbody">
             {% for parameter in parameters %}
             <tr>
-                <td>{{ parameter.name }}</td>
-                <td>{{ parameter.architecture }}</td>
-                <td>{{ parameter.learning_rate }}</td>
-                <td>{{ parameter.loss }}</td>
-                <td>{{ parameter.epochs }}</td>
-                <td>{{ parameter.batch_size }}</td>
-                <td>{{ parameter.validation_split }}</td>
+                <td class="model-params-td">{{ parameter.name }}</td>
+                <td class="model-params-td">{{ parameter.architecture }}</td>
+                <td class="model-params-td">{{ parameter.learning_rate }}</td>
+                <td class="model-params-td">{{ parameter.loss }}</td>
+                <td class="model-params-td">{{ parameter.epochs }}</td>
+                <td class="model-params-td">{{ parameter.batch_size }}</td>
+                <td class="model-params-td">{{ parameter.validation_split }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
+<div class="model-performance-link">
+    <a href="{% url 'model_performance' %}" class="btn btn-primary">Ver Performance do Modelo</a>
+</div>
 </body>
+
 {% endblock %}
+

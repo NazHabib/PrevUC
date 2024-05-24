@@ -55,25 +55,19 @@ from django.core.mail import send_mail
 def calculate_metrics(model, X_train, y_train, X_test, y_test, loss_fn):
     if model is None:
         raise ValueError('The model variable cannot be None.')
-
     y_pred_train = model.predict(X_train)
     y_pred_test = model.predict(X_test)
-
-    # Calculate the loss for the training set using the provided loss function
     y_pred_train_loss = loss_fn(y_train, y_pred_train)
     loss_train = np.mean(y_pred_train_loss)
-
     mse_train = mean_squared_error(y_train, y_pred_train)
     mae_train = mean_absolute_error(y_train, y_pred_train)
     r2_train = r2_score(y_train, y_pred_train)
     rmse_train = np.sqrt(mse_train)
-
     loss_test = model.evaluate(X_test, y_test, verbose=0)
     mse_test = mean_squared_error(y_test, y_pred_test)
     mae_test = mean_absolute_error(y_test, y_pred_test)
     r2_test = r2_score(y_test, y_pred_test)
     rmse_test = np.sqrt(mse_test)
-
     return {
         'loss_train': loss_train,
         'mse_train': mse_train,
@@ -369,26 +363,16 @@ def main_prevision(request):
         form = PrevisionForm(request.POST)
         if form.is_valid():
             input_data = form.cleaned_data
-
-            # Create DataFrame from cleaned data
             df_input = pd.DataFrame([input_data])
-
-            # Rename columns directly in the view function
             df_input.rename(columns={
                 'race_ethnicity': 'race/ethnicity',
                 'parental_level_of_education': 'parental level of education'
             }, inplace=True)
-
-            # Convert boolean fields from string representation to numeric
             boolean_fields = ['gender', 'lunch', 'test_preparation_course']
             for field in boolean_fields:
                 df_input[field] = df_input[field].replace({'True': 1, 'False': 0}).astype(int)
-
-            # One-hot encoding categorical columns
             categorical_columns = ['race/ethnicity', 'parental level of education']
             df_input_encoded = pd.get_dummies(df_input, columns=categorical_columns)
-
-            # Ensure DataFrame matches expected structure
             expected_columns = [
                 'gender', 'lunch', 'test preparation course', 'race/ethnicity_group A',
                 'race/ethnicity_group B', 'race/ethnicity_group C',
@@ -401,24 +385,14 @@ def main_prevision(request):
                 'parental level of education_some high school'
             ]
             df_input_encoded = df_input_encoded.reindex(columns=expected_columns, fill_value=0).astype('int32')
-
-            # Obtain prediction results
             prediction_result = predict_scores(df_input_encoded)
-
-            # Ensure the prediction result is serializable
             prediction_result_serializable = {k: int(v) for k, v in prediction_result.items()}
-
-            # Store serialized prediction result and input data in session
             request.session['prediction_result'] = prediction_result_serializable
             request.session['prediction_data'] = input_data
-
-            # Redirect to the prediction results page
             return redirect('prediction_results')
         else:
-            # If the form is not valid, render the form with errors
             return render(request, 'main/main_prevision.html', {'form': form})
     else:
-        # For GET requests, simply display the form
         form = PrevisionForm()
     return render(request, 'main/main_prevision.html', {'form': form})
 
@@ -457,12 +431,10 @@ def saved_previsions(request):
                 writing_score=prediction_result.get('writing_score'),
             )
             print("New prediction saved:", new_prevision)
-            # Clear the session data after saving
             request.session.pop('prediction_data', None)
             request.session.pop('prediction_result', None)
             return redirect('main_prevision')
         else:
-            # Handle the case where the necessary data isn't in the session
             messages.error(request, "Missing prediction data.")
             return redirect('main_prevision')
 
@@ -619,13 +591,10 @@ def train_and_evaluate_model(request):
     if request.method == 'POST':
         form = ModelConfigurationFormTesting(request.POST)
         if form.is_valid():
-            # Preprocessing the data
             file_path = 'main/StudentsPerformance.csv'
             data = preprocess_data(file_path)
             X_target, y_targets = split_data(data)
             X_train, X_test, y_trains, y_tests = train_test_split_data(X_target, y_targets)
-
-            # Collecting form data
             num_layers = form.cleaned_data['num_layers']
             neurons_per_layer_str = form.cleaned_data['neurons_per_layer']
             try:
@@ -638,14 +607,10 @@ def train_and_evaluate_model(request):
             epochs = form.cleaned_data['epochs']
             batch_size = form.cleaned_data['batch_size']
             learning_rate = form.cleaned_data['learning_rate']
-
-            # Training the model
             for i in range(len(X_train)):
                 train_data = X_train[i]
                 train_labels = y_trains[i]
                 history = train_model(model, train_data, train_labels, epochs, batch_size, learning_rate)
-
-            # Evaluating the model
             loss_values, mae_values, rmse_values, mse_values = [], [], [], []
             for i in range(len(X_test)):
                 loss, mae, rmse_value, mse = evaluate_model(model, X_test[i], y_tests[i])
@@ -653,8 +618,6 @@ def train_and_evaluate_model(request):
                 mae_values.append(mae)
                 rmse_values.append(rmse_value)
                 mse_values.append(mse)
-
-            # Saving results to the database
             model_config = ModelConfigurationTesting(
                 num_layers=num_layers,
                 epochs=epochs,
@@ -666,8 +629,6 @@ def train_and_evaluate_model(request):
                 mse=mse_values
             )
             model_config.save()
-
-            # Saving neuron layers
             for neurons in neurons_per_layer:
                 NeuronLayer(model_config=model_config, neurons=neurons).save()
 
@@ -680,19 +641,14 @@ def train_and_evaluate_model(request):
             }
             return HttpResponseRedirect(reverse('model_results', kwargs={'pk': model_config.pk}))
         else:
-            # Handle form errors
             return JsonResponse({'message': 'Form is not valid.', 'errors': form.errors}, status=400)
     else:
-        # Present the form for input if GET request
         form = ModelConfigurationFormTesting()
         return render(request, 'main/model_configuration_form.html', {'form': form})
 
 
 def model_results(request, pk):
-    # Retrieve the specific configuration using the primary key
     config = get_object_or_404(ModelConfigurationTesting, pk=pk)
-
-    # Separate metrics for different models
     math_metrics = {
         'mse': format(config.mse[0], ".2f"),
         'rmse': format(config.rmse[0], ".2f"),
@@ -708,11 +664,8 @@ def model_results(request, pk):
         'rmse': format(config.rmse[2], ".2f"),
         'mae': format(config.mae[2], ".2f")
     }
-
-    # Retrieve neurons per layer
     neurons_per_layer = config.neuronlayer_set.values_list('neurons', flat=True)
 
-    # Render the results page and pass the configuration object and separated metrics to the template
     return render(request, 'main/model_results.html', {
         'config': config,
         'neurons_per_layer': neurons_per_layer,
@@ -721,9 +674,7 @@ def model_results(request, pk):
         'writing_metrics': writing_metrics
     })
 
-
 def list_configurations(request):
-    # Fetch all configurations and their related neuron layers
     configurations = ModelConfigurationTesting.objects.prefetch_related('neuronlayer_set').all()
     return render(request, 'main/list_configurations.html', {'configurations': configurations})
 
@@ -731,4 +682,87 @@ def list_configurations(request):
 def model_parameters_list(request):
     parameters = ModelParameters.objects.all()
     return render(request, 'main/model_parameters_list.html', {'parameters': parameters})
+
+
+def update_model(request, pk):
+    config = get_object_or_404(ModelConfigurationTesting, pk=pk)
+
+    # Check if 'name' attribute exists and assign default if not
+    if hasattr(config, 'name'):
+        name = config.name
+    else:
+        name = 'atual'
+
+    # Check if a ModelParameters object with this name exists, if not, create a new one
+    parameters, created = ModelParameters.objects.get_or_create(
+        name=name,
+        defaults={
+            'architecture': list(config.neuronlayer_set.values_list('neurons', flat=True)),
+            'learning_rate': config.learning_rate,
+            'loss': 'mean_squared_error',  # assuming a default value
+            'epochs': config.epochs,
+            'batch_size': config.batch_size,
+            'validation_split': 0.2  # assuming a default value
+        }
+    )
+
+    num_layers = config.num_layers
+    neurons_per_layer = config.neuronlayer_set.values_list('neurons', flat=True)
+    epochs = config.epochs
+    batch_size = config.batch_size
+    learning_rate = config.learning_rate
+
+    file_path = 'main/StudentsPerformance.csv'
+    data = pd.read_csv(file_path)
+
+    data['gender'] = data['gender'].map({'male': 1, 'female': 0})
+    data['lunch'] = data['lunch'].map({'standard': 1, 'free/reduced': 0})
+    data['test preparation course'] = data['test preparation course'].map({'completed': 1, 'none': 0})
+    data = pd.get_dummies(data, columns=['race/ethnicity', 'parental level of education'])
+
+    feature_columns = data.columns.drop(['math score', 'reading score', 'writing score'])
+    X_target1 = data[feature_columns].astype('int32')
+    y_target1 = data['math score'].astype('int32')
+    X_target2 = data[feature_columns].astype('int32')
+    y_target2 = data['reading score'].astype('int32')
+    X_target3 = data[feature_columns].astype('int32')
+    y_target3 = data['writing score'].astype('int32')
+
+    X_train, X_test, y_train, y_test = train_test_split(X_target1, y_target1, test_size=0.2, random_state=42)
+    X_train2, X_test2, y_train2, y_test2 = train_test_split(X_target2, y_target2, test_size=0.2, random_state=43)
+    X_train3, X_test3, y_train3, y_test3 = train_test_split(X_target3, y_target3, test_size=0.2, random_state=44)
+
+    def build_model(architecture, input_shape):
+        model = Sequential()
+        model.add(Input(shape=(input_shape,)))
+        for units in architecture:
+            model.add(Dense(units, activation='relu'))
+        model.add(Dense(1))
+        return model
+
+    # Build and train the Math model
+    math_architecture = neurons_per_layer
+    model = build_model(math_architecture, X_train.shape[1])
+    model.compile(optimizer=Adam(learning_rate=learning_rate), loss='mean_squared_error', metrics=['mae'])
+    history = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose=0)
+    model.save('model_math.keras')
+
+    # Build and train the Reading model
+    reading_architecture = neurons_per_layer
+    model2 = build_model(reading_architecture, X_train2.shape[1])
+    model2.compile(optimizer=Adam(learning_rate=learning_rate), loss='mean_squared_error', metrics=['mae'])
+    history2 = model2.fit(X_train2, y_train2, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose=0)
+    model2.save('model_reading.keras')
+
+    # Build and train the Writing model
+    writing_architecture = neurons_per_layer
+    model3 = build_model(writing_architecture, X_train3.shape[1])
+    model3.compile(optimizer=Adam(learning_rate=learning_rate), loss='mean_squared_error', metrics=['mae'])
+    history3 = model3.fit(X_train3, y_train3, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose=0)
+    model3.save('model_writing.keras')
+
+    # Delete all ModelParameters except the one just created/retrieved
+    ModelParameters.objects.exclude(pk=parameters.pk).delete()
+
+    return HttpResponseRedirect(reverse('model_results', kwargs={'pk': pk}))
 
