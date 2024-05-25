@@ -6,7 +6,8 @@ from django.contrib import admin
 # Corrected urlpatterns
 urlpatterns = [
     path('', views.base,name='base'),
-    path('home', views.home, name='home'),
+    path('home/', views.home, name='home'),
+    path('login/', views.login_view, name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('sign-up', views.sign_up, name='sign_up'),
     path('view-changes/', views.view_changes, name='view_changes'),
@@ -20,7 +21,7 @@ urlpatterns = [
     path('guest-main/', views.guest_prevision_form, name='guest_prevision_form'),
     path('subscribe/', views.subscribe_newsletter, name='subscribe_newsletter'),
     path('edit_account/', views.edit_account, name='edit_account'),
-    path('main-prevision/', views.main_prevision, name='main_prevision'),
+    path('predict/', views.main_prevision, name='main_prevision'),
     path('data-input/', views.data_input, name='data_input'),
     path('change-documentation/', views.change_documentation, name='change_documentation'),
     path('notifications/', views.view_notifications, name='view_notifications'),

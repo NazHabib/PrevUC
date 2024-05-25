@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+settings_module = 'website.deployment' if 'WEBSITE_HOSTNAME' in os.environ else 'website.settings'
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "website.settings")
 
 application = get_wsgi_application()
