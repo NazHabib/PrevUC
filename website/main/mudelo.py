@@ -3,12 +3,12 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.optimizers import Adam
-from .models import ModelParameters
+
 
 # Clear all existing entries in ModelParameters
-ModelParameters.objects.all().delete()
 
-file_path = 'main/StudentsPerformance.csv'
+
+file_path = 'StudentsPerformance.csv'
 data = pd.read_csv(file_path)
 
 data['gender'] = data['gender'].map({'male': 1, 'female': 0})
@@ -36,18 +36,6 @@ def build_model(architecture, input_shape):
     model.add(Dense(1))
     return model
 
-# Function to save model parameters
-def save_model_parameters(name, architecture, learning_rate, loss, epochs, batch_size, validation_split):
-    model_parameters = ModelParameters(
-        name=name,
-        architecture=architecture,
-        learning_rate=learning_rate,
-        loss=loss,
-        epochs=epochs,
-        batch_size=batch_size,
-        validation_split=validation_split
-    )
-    model_parameters.save()
 
 # Math model
 math_architecture = [6, 61, 32]
@@ -55,7 +43,6 @@ model = build_model(math_architecture, X_train.shape[1])
 model.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error', metrics=['mae'])
 history = model.fit(X_train, y_train, epochs=79, batch_size=11, validation_split=0.2, verbose=0)
 model.save('model_math.keras')
-save_model_parameters('math_model', math_architecture, 0.01, 'mean_squared_error', 79, 11, 0.2)
 
 # Reading model
 reading_architecture = [6, 36, 32]
@@ -63,7 +50,6 @@ model2 = build_model(reading_architecture, X_train2.shape[1])
 model2.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error', metrics=['mae'])
 history2 = model2.fit(X_train2, y_train2, epochs=30, batch_size=41, validation_split=0.2, verbose=0)
 model2.save('model_reading.keras')
-save_model_parameters('reading_model', reading_architecture, 0.01, 'mean_squared_error', 30, 41, 0.2)
 
 # Writing model
 writing_architecture = [1, 56]
@@ -71,4 +57,3 @@ model3 = build_model(writing_architecture, X_train3.shape[1])
 model3.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error', metrics=['mae'])
 history3 = model3.fit(X_train3, y_train3, epochs=59, batch_size=30, validation_split=0.2, verbose=0)
 model3.save('model_writing.keras')
-save_model_parameters('writing_model', writing_architecture, 0.01, 'mean_squared_error', 59, 30, 0.2)

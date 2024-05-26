@@ -11,7 +11,6 @@ from keras import Sequential, Input
 from django.utils.encoding import force_str
 from keras.src.layers import Dense
 from keras.src.optimizers import Adam
-from keras.src.saving import load_model
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
 from typing import List, Tuple
