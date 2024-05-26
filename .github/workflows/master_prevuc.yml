@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
@@ -32,21 +32,21 @@ jobs:
           cd website
           pip install -r requirements.txt
 
-      - name: run collecstatic
+      - name: Collect static files
         run: |
           cd website
-          python manage.py collectstatic
-        
+          python manage.py collectstatic --noinput
+
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
         run: |
           cd website
-          zip ../release.zip ./* -r
+          zip -r ../release.zip .
           cd ..
 
       - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: python-app
           path: release.zip
@@ -62,16 +62,15 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: python-app
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_539DC28B69874388B7205710DEC88887 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_742767473AFA4990B38C370298EC53B2 }}
@@ -83,4 +82,4 @@ jobs:
         with:
           app-name: 'PrevUC'
           slot-name: 'Production'
-          
+
