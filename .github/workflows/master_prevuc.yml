@@ -76,11 +76,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_742767473AFA4990B38C370298EC53B2 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B8D1625FCAAF4A78A4D5762A7174E2CF }}
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v4
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
           app-name: 'PrevUC'
           slot-name: 'Production'
-
 
