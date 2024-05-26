@@ -32,17 +32,17 @@ jobs:
           cd website
           pip install -r requirements.txt
 
-      - name: run collecstatic
+      - name: Collect static files
         run: |
           cd website
-          python manage.py collectstatic
-        
+          python manage.py collectstatic --noinput
+
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
         run: |
           cd website
-          zip ../release.zip ./* -r
+          zip -r ../release.zip .
           cd ..
 
       - name: Upload artifact for deployment jobs
@@ -69,7 +69,6 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v1
         with:
@@ -83,4 +82,5 @@ jobs:
         with:
           app-name: 'PrevUC'
           slot-name: 'Production'
+
           
