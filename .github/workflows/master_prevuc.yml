@@ -70,16 +70,17 @@ jobs:
         run: unzip release.zip
 
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_539DC28B69874388B7205710DEC88887 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_742767473AFA4990B38C370298EC53B2 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B8D1625FCAAF4A78A4D5762A7174E2CF }}
 
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v4
         id: deploy-to-webapp
         with:
           app-name: 'PrevUC'
           slot-name: 'Production'
+
 
