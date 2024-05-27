@@ -18,3 +18,4 @@ def predict_scores(input_data):
         'writing_score': models['writing'].predict(input_data).flatten()[0],
     }
     return predictions
+

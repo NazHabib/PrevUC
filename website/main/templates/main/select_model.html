@@ -1,0 +1,71 @@
+{% extends 'main/base.html' %}
+
+<head>
+    <title>Escolha o modelo</title>
+</head>
+    {% block content %}
+    <style>
+        .alfa{
+            width: 60%;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+        }
+
+        h1 {
+            color: black;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #000000;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #007BFF;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+<div class="alfa">
+        <h1>Escolha o modelo que quer mudar</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <select id="model_type" name="model_type">
+                    <option value="model_math">Modelo de Matemática</option>
+                    <option value="model_reading">Modelo de Leitura</option>
+                    <option value="model_writing">Modelo de Escrita</option>
+                </select>
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn">Submeter</button>
+            </div>
+        </form>
+    </div>{% endblock %}
+

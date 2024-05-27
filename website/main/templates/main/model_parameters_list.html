@@ -97,7 +97,7 @@
             <tr>
                 <td class="model-params-td">{{ parameter.name }}</td>
                 <td class="model-params-td">{{ parameter.architecture }}</td>
-                <td class="model-params-td">{{ parameter.learning_rate }}</td>
+                <td class="model-params-td">{{ parameter.learning_rate|floatformat:4 }}</td>
                 <td class="model-params-td">{{ parameter.loss }}</td>
                 <td class="model-params-td">{{ parameter.epochs }}</td>
                 <td class="model-params-td">{{ parameter.batch_size }}</td>

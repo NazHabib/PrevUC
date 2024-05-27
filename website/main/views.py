@@ -646,6 +646,60 @@ def train_and_evaluate_model(request):
         return render(request, 'main/model_configuration_form.html', {'form': form})
 
 
+def list_configurations(request):
+    configurations = ModelConfigurationTesting.objects.prefetch_related('neuronlayer_set').all()
+    return render(request, 'main/list_configurations.html', {'configurations': configurations})
+
+import tensorflow as tf
+from .models import ModelParameters
+def get_model_parameters(model_path, model_id):
+    model = tf.keras.models.load_model(model_path)
+    architecture = [layer.units for layer in model.layers if isinstance(layer, tf.keras.layers.Dense)]
+    architecture = architecture[:-1]  # Remove the last layer from the architecture list
+    learning_rate = model.optimizer.learning_rate.numpy()
+    loss = model.loss
+
+    # Fetch epochs and batch_size from the ModelParameters model using the model_id
+    parameters = ModelParameters.objects.get(pk=model_id)
+    epochs = parameters.epochs
+    batch_size = parameters.batch_size
+    validation_split = parameters.validation_split
+
+    return {
+        'architecture': architecture,
+        'learning_rate': learning_rate,
+        'loss': loss,
+        'epochs': epochs,
+        'batch_size': batch_size,
+        'validation_split': validation_split
+    }
+
+
+
+def model_parameters_list(request):
+    # Define the paths to the models using their IDs
+    model_paths = {
+        10: 'main/model_math.keras',
+        11: 'main/model_reading.keras',
+        12: 'main/model_writing.keras',
+    }
+
+    # Fetch and update the model parameters for each model
+    for model_id, model_path in model_paths.items():
+        parameters = ModelParameters.objects.get(pk=model_id)
+        model_params = get_model_parameters(model_path, model_id)
+        parameters.architecture = model_params['architecture']
+        parameters.learning_rate = model_params['learning_rate']
+        parameters.loss = model_params['loss']
+        parameters.epochs = model_params['epochs']
+        parameters.batch_size = model_params['batch_size']
+        parameters.validation_split = model_params['validation_split']
+        parameters.save()
+
+    parameters = ModelParameters.objects.all()
+    return render(request, 'main/model_parameters_list.html', {'parameters': parameters})
+
+
 def model_results(request, pk):
     config = get_object_or_404(ModelConfigurationTesting, pk=pk)
     math_metrics = {
@@ -673,37 +727,47 @@ def model_results(request, pk):
         'writing_metrics': writing_metrics
     })
 
-def list_configurations(request):
-    configurations = ModelConfigurationTesting.objects.prefetch_related('neuronlayer_set').all()
-    return render(request, 'main/list_configurations.html', {'configurations': configurations})
+def select_model(request, pk):
+    if request.method == 'POST':
+        form = ModelSelectionForm(request.POST)
+        if form.is_valid():
+            model_type = form.cleaned_data['model_type']
+            return redirect('update_model', pk=pk, model_type=model_type)
+    else:
+        form = ModelSelectionForm()
 
+    return render(request, 'main/select_model.html', {'form': form})
 
-def model_parameters_list(request):
-    parameters = ModelParameters.objects.all()
-    return render(request, 'main/model_parameters_list.html', {'parameters': parameters})
-
-
-def update_model(request, pk):
+def update_model(request, pk, model_type):
     config = get_object_or_404(ModelConfigurationTesting, pk=pk)
 
     # Check if 'name' attribute exists and assign default if not
     if hasattr(config, 'name'):
         name = config.name
     else:
-        name = 'atual'
+        name = model_type
 
-    # Check if a ModelParameters object with this name exists, if not, create a new one
-    parameters, created = ModelParameters.objects.get_or_create(
-        name=name,
-        defaults={
-            'architecture': list(config.neuronlayer_set.values_list('neurons', flat=True)),
-            'learning_rate': config.learning_rate,
-            'loss': 'mean_squared_error',  # assuming a default value
-            'epochs': config.epochs,
-            'batch_size': config.batch_size,
-            'validation_split': 0.2  # assuming a default value
-        }
-    )
+    # Map model_type to their respective IDs in the database
+    model_type_id_map = {
+        'model_math': 10,
+        'model_reading': 11,
+        'model_writing': 12,
+    }
+
+    # Get the corresponding ID for the given model_type
+    model_id = model_type_id_map.get(model_type)
+
+    # Fetch the ModelParameters object using the ID
+    parameters = get_object_or_404(ModelParameters, id=model_id)
+
+    # Update the parameters
+    parameters.architecture = list(config.neuronlayer_set.values_list('neurons', flat=True))
+    parameters.learning_rate = config.learning_rate
+    parameters.loss = 'mean_squared_error'
+    parameters.epochs = config.epochs
+    parameters.batch_size = config.batch_size
+    parameters.validation_split = 0.2
+    parameters.save()
 
     num_layers = config.num_layers
     neurons_per_layer = config.neuronlayer_set.values_list('neurons', flat=True)
@@ -720,16 +784,10 @@ def update_model(request, pk):
     data = pd.get_dummies(data, columns=['race/ethnicity', 'parental level of education'])
 
     feature_columns = data.columns.drop(['math score', 'reading score', 'writing score'])
-    X_target1 = data[feature_columns].astype('int32')
-    y_target1 = data['math score'].astype('int32')
-    X_target2 = data[feature_columns].astype('int32')
-    y_target2 = data['reading score'].astype('int32')
-    X_target3 = data[feature_columns].astype('int32')
-    y_target3 = data['writing score'].astype('int32')
+    X_target = data[feature_columns].astype('int32')
+    y_target = data[f'{model_type.split("_")[1]} score'].astype('int32')
 
-    X_train, X_test, y_train, y_test = train_test_split(X_target1, y_target1, test_size=0.2, random_state=42)
-    X_train2, X_test2, y_train2, y_test2 = train_test_split(X_target2, y_target2, test_size=0.2, random_state=43)
-    X_train3, X_test3, y_train3, y_test3 = train_test_split(X_target3, y_target3, test_size=0.2, random_state=44)
+    X_train, X_test, y_train, y_test = train_test_split(X_target, y_target, test_size=0.2, random_state=42)
 
     def build_model(architecture, input_shape):
         model = Sequential()
@@ -739,29 +797,17 @@ def update_model(request, pk):
         model.add(Dense(1))
         return model
 
-    # Build and train the Math model
-    math_architecture = neurons_per_layer
-    model = build_model(math_architecture, X_train.shape[1])
+    architecture = neurons_per_layer
+    model = build_model(architecture, X_train.shape[1])
     model.compile(optimizer=Adam(learning_rate=learning_rate), loss='mean_squared_error', metrics=['mae'])
     history = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose=0)
-    model.save('model_math.keras')
+    model.save(f'main/{model_type}.keras')
 
-    # Build and train the Reading model
-    reading_architecture = neurons_per_layer
-    model2 = build_model(reading_architecture, X_train2.shape[1])
-    model2.compile(optimizer=Adam(learning_rate=learning_rate), loss='mean_squared_error', metrics=['mae'])
-    history2 = model2.fit(X_train2, y_train2, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose=0)
-    model2.save('model_reading.keras')
-
-    # Build and train the Writing model
-    writing_architecture = neurons_per_layer
-    model3 = build_model(writing_architecture, X_train3.shape[1])
-    model3.compile(optimizer=Adam(learning_rate=learning_rate), loss='mean_squared_error', metrics=['mae'])
-    history3 = model3.fit(X_train3, y_train3, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose=0)
-    model3.save('model_writing.keras')
-
-    # Delete all ModelParameters except the one just created/retrieved
-    ModelParameters.objects.exclude(pk=parameters.pk).delete()
+    # Debugging output
+    print(f"Model training completed for {model_type}")
+    print(f"Model saved to main/{model_type}.keras")
 
     return HttpResponseRedirect(reverse('model_results', kwargs={'pk': pk}))
+
+
 

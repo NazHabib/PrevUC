@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from django.urls import path, include
 from . import views
-from django.contrib import admin
 
-# Corrected urlpatterns
+
 urlpatterns = [
-    path('', views.base,name='base'),
+    path('', views.base, name='base'),
     path('home/', views.home, name='home'),
     path('login/', views.login_view, name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
@@ -42,5 +41,6 @@ urlpatterns = [
     path('activate/<uidb64>/<token>/', views.activate_account, name='activate_account'),
     path('account-activation-sent/', views.account_activation_sent, name='account_activation_sent'),
     path('model-parameters/', views.model_parameters_list, name='model_parameters_list'),
-    path('update_model/<int:pk>/', views.update_model, name='update_model'),
+    path('select_model/<int:pk>/', views.select_model, name='select_model'),
+    path('update_model/<int:pk>/<str:model_type>/', views.update_model, name='update_model'),
 ]

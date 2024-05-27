@@ -1,9 +1,46 @@
-import pandas as pd
-import numpy as np
 from django.shortcuts import render
-from sklearn.model_selection import train_test_split
 from tensorflow import keras
+import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import tensorflow as tf
+import numpy as np
+from tensorflow.keras.losses import MeanSquaredError
+from tensorflow.keras.models import load_model
+from tensorflow.keras.losses import MeanSquaredError
+from main.models import ModelParameters
+
+
+def get_model_parameters(model_path, model_id):
+    model = tf.keras.models.load_model(model_path)
+    architecture = [layer.units for layer in model.layers if isinstance(layer, tf.keras.layers.Dense)]
+    architecture = architecture[:-1]
+    learning_rate = model.optimizer.learning_rate.numpy()
+
+    model_paths = {
+        10: 'main/model_math.keras',
+        11: 'main/model_reading.keras',
+        12: 'main/model_writing.keras',
+    }
+
+    loss = MeanSquaredError()  # Default loss function
+
+    if hasattr(model, 'history') and model.history:
+        epochs = model.history.epoch[-1] + 1
+        batch_size = model.history.params['batch_size']
+    else:
+        parameters = ModelParameters.objects.get(id=model_id)
+        epochs = parameters.epochs
+        batch_size = parameters.batch_size
+
+    return {
+        'architecture': architecture,
+        'learning_rate': learning_rate,
+        'loss': loss,
+        'epochs': epochs,
+        'batch_size': batch_size,
+        'validation_split': 0.2
+    }
 
 def calculate_metrics(model, X_train, y_train, X_test, y_test, loss_fn):
     if model is None:
@@ -13,7 +50,7 @@ def calculate_metrics(model, X_train, y_train, X_test, y_test, loss_fn):
     y_pred_test = model.predict(X_test)
 
     # Calculate the loss for the training set using the provided loss function
-    y_pred_train_loss = loss_fn(y_train, y_pred_train)
+    y_pred_train_loss = loss_fn(y_train, y_pred_train).numpy()
     loss_train = np.mean(y_pred_train_loss)
 
     mse_train = mean_squared_error(y_train, y_pred_train)
@@ -45,14 +82,6 @@ def calculate_metrics(model, X_train, y_train, X_test, y_test, loss_fn):
         'rmse_test': float(f"{rmse_test:.2f}"),
     }
 
-import os
-import pandas as pd
-from sklearn.model_selection import train_test_split
-import keras
-from django.shortcuts import render
-from .metrics import calculate_metrics
-import matplotlib.pyplot as plt
-
 def model_performance(request):
     file_path = 'dashboard/StudentsPerformance.csv'
     data = pd.read_csv(file_path)
@@ -78,21 +107,22 @@ def model_performance(request):
     X_train3, X_test3, y_train3, y_test3 = train_test_split(X_target3, y_target3, test_size=0.2, random_state=44)
 
     # Load models
-    math_model = keras.models.load_model('main/model_math.keras')
-    reading_model = keras.models.load_model('main/model_reading.keras')
-    writing_model = keras.models.load_model('main/model_writing.keras')
+    math_model = load_model('main/model_math.keras')
+    reading_model = load_model('main/model_reading.keras')
+    writing_model = load_model('main/model_writing.keras')
+
+    # Get parameters
+    math_model_params = get_model_parameters('main/model_math.keras', 10)
+    reading_model_params = get_model_parameters('main/model_reading.keras', 11)
+    writing_model_params = get_model_parameters('main/model_writing.keras', 12)
 
     # Calculate metrics
-    math_metrics = calculate_metrics(math_model, X_train, y_train, X_test, y_test, mean_squared_error)
-    reading_metrics = calculate_metrics(reading_model, X_train2, y_train2, X_test2, y_test2, mean_squared_error)
-    writing_metrics = calculate_metrics(writing_model, X_train3, y_train3, X_test3, y_test3, mean_squared_error)
-
-    # Generate and save graphs
-
+    math_metrics = calculate_metrics(math_model, X_train, y_train, X_test, y_test, math_model_params['loss'])
+    reading_metrics = calculate_metrics(reading_model, X_train2, y_train2, X_test2, y_test2, reading_model_params['loss'])
+    writing_metrics = calculate_metrics(writing_model, X_train3, y_train3, X_test3, y_test3, writing_model_params['loss'])
 
     return render(request, 'dashboard/dashboard.html', {
         'math_metrics': math_metrics,
         'reading_metrics': reading_metrics,
         'writing_metrics': writing_metrics,
-
     })
