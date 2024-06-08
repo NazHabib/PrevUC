@@ -104,7 +104,7 @@ DATABASES = {
     }
 }
 
-#put this on when https is implemented
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -148,8 +148,6 @@ IGNORED_PATTERNS = [
 LANGUAGE_CODE = 'pt-pt'
 
 TIME_ZONE = "UTC"
-
-USE_I18N = True
 
 USE_TZ = True
 

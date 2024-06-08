@@ -655,11 +655,11 @@ from .models import ModelParameters
 def get_model_parameters(model_path, model_id):
     model = tf.keras.models.load_model(model_path)
     architecture = [layer.units for layer in model.layers if isinstance(layer, tf.keras.layers.Dense)]
-    architecture = architecture[:-1]  # Remove the last layer from the architecture list
+    architecture = architecture[:-1]
     learning_rate = model.optimizer.learning_rate.numpy()
     loss = model.loss
 
-    # Fetch epochs and batch_size from the ModelParameters model using the model_id
+
     parameters = ModelParameters.objects.get(pk=model_id)
     epochs = parameters.epochs
     batch_size = parameters.batch_size
@@ -677,14 +677,13 @@ def get_model_parameters(model_path, model_id):
 
 
 def model_parameters_list(request):
-    # Define the paths to the models using their IDs
     model_paths = {
         10: 'main/model_math.keras',
         11: 'main/model_reading.keras',
         12: 'main/model_writing.keras',
     }
 
-    # Fetch and update the model parameters for each model
+
     for model_id, model_path in model_paths.items():
         parameters = ModelParameters.objects.get(pk=model_id)
         model_params = get_model_parameters(model_path, model_id)
@@ -741,26 +740,26 @@ def select_model(request, pk):
 def update_model(request, pk, model_type):
     config = get_object_or_404(ModelConfigurationTesting, pk=pk)
 
-    # Check if 'name' attribute exists and assign default if not
+
     if hasattr(config, 'name'):
         name = config.name
     else:
         name = model_type
 
-    # Map model_type to their respective IDs in the database
+
     model_type_id_map = {
         'model_math': 10,
         'model_reading': 11,
         'model_writing': 12,
     }
 
-    # Get the corresponding ID for the given model_type
+
     model_id = model_type_id_map.get(model_type)
 
-    # Fetch the ModelParameters object using the ID
+
     parameters = get_object_or_404(ModelParameters, id=model_id)
 
-    # Update the parameters
+
     parameters.architecture = list(config.neuronlayer_set.values_list('neurons', flat=True))
     parameters.learning_rate = config.learning_rate
     parameters.loss = 'mean_squared_error'
@@ -803,7 +802,7 @@ def update_model(request, pk, model_type):
     history = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose=0)
     model.save(f'main/{model_type}.keras')
 
-    # Debugging output
+
     print(f"Model training completed for {model_type}")
     print(f"Model saved to main/{model_type}.keras")
 
